@@ -1,0 +1,68 @@
+name: markdown-check
+
+pr:
+  branches:
+    include:
+    - main
+
+stages:
+- stage: markdown
+  displayName: Markdown Checks
+  jobs:
+  - job: md_lint
+    displayName: Markdown lint check
+    steps:
+    - task: Npm@1
+      displayName: Install dependencies
+      inputs:
+        command: ci
+    - task: Npm@1
+      displayName: Run markdown link check
+      inputs:
+        command: custom
+        customCommand: run lint:links
+    - task: Npm@1
+      displayName: Run markdown spell check
+      inputs:
+        command: custom
+        customCommand: run lint:spelling
+    - task: Npm@1
+      displayName: Run markdown lint check
+      inputs:
+        command: custom
+        customCommand: run lint:md
+  # - job: md_results
+  #   displayName: Markdown check results
+  #   steps:
+  #   - script: |
+  #       echo "Markdown check results: "
+  #       fail=0
+
+  #       echo -en "- Markdown links check:    "
+  #       if [[ "$(steps.md_link_check.conclusion)" == "failure" ]] || [[ "${{steps.md-link-check.outcome}}" == "failure" ]];then
+  #         fail=1
+  #         echo -e "\e[31mFailure"
+  #       else
+  #         echo -e "\e[32mSuccess"
+  #       fi
+
+  #       echo -en "- Markdown spell check:    "
+  #       if [[ "$(steps.md_spell_check.conclusion)" == "failure" ]] || [[ "${{steps.md-spell-check.outcome}}" == "failure" ]]; then
+  #         fail=1
+  #         echo -e "\e[31mFailure"
+  #       else
+  #         echo -e "\e[32mSuccess"
+  #       fi
+
+  #       echo -en "- Markdown lint check:    "
+  #       if [[ "$(steps.md_lint_check.conclusion)" == "failure" ]] || [[ "${{steps.md-lint-check.outcome}}" == "failure" ]]; then
+  #         fail=1
+  #         echo -e "\e[31mFailure"
+  #       else
+  #         echo -e "\e[32mSuccess"
+  #       fi
+
+  #       if [[ $fail -eq 1 ]]; then
+  #         echo -e "Expand individual steps above to view specific errors."
+  #         exit 1
+  #       fi

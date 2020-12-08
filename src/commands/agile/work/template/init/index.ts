@@ -1,0 +1,1 @@
+export { agileWorkTemplateInitCommandFactory } from "./agileWorkTemplateInit";

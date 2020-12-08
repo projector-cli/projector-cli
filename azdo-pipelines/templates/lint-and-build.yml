@@ -1,0 +1,22 @@
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '14.x'
+    displayName: 'Install Node.js'
+
+  - task: Npm@1
+    displayName: Install dependencies
+    inputs:
+      command: ci
+
+  - task: Npm@1
+    displayName: Run linting
+    inputs:
+      command: custom
+      customCommand: run lint
+
+  - task: Npm@1
+    displayName: Run build
+    inputs:
+      command: custom
+      customCommand: run build

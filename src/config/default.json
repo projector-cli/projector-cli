@@ -1,0 +1,52 @@
+{
+  "links": [
+    {
+      "name": "snowball",
+      "url": "https://snowballv2.azurewebsites.net/",
+      "description": "Track your work in CSE"
+    },
+    {
+      "name": "playbook",
+      "url": "https://github.com/Microsoft/code-with-engineering-playbook",
+      "description": "The Code-With Engineering Playbook"
+    },
+    {
+      "name": "playbook-issues",
+      "url": "https://github.com/Microsoft/code-with-engineering-playbook/issues",
+      "description": "Issues in the Code-With Engineering Playbook"
+    }
+  ],
+  "playbook": {
+    "owner": "zmmille2",
+    "repo": "code-with-engineering-playbook",
+    "paths": {
+      "workItemTemplates": ".projector/workItemTemplates",
+      "templateManifest": ".projector/templates.json"
+    }
+  },
+  "agile": {
+    "sprints": {
+      "defaultSprintLength": 5,
+      "defaultNumberOfSprints": 10,
+      "defaultDaysBetweenSprints": 2,
+      "defaultSprintStartIndex": 1
+    },
+    "project": {
+      "templateTypeId": "adcc42ab-9882-485e-a3ed-7678f01f66bc",
+      "sourceControlType": "Git"
+    },
+    "board": {
+      "columns": [
+        "To-Do",
+        "Doing",
+        "In-Review",
+        "Done"
+      ],
+      "firstColumn": "To-Do"
+    }
+  },
+  "appInsights": {
+    "instrumentationKey": "6e4b4afa-05f9-4a1f-a5f8-a95958b53f60",
+    "enabled": "😎"
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "releaseCommitMessageFormat": "chore(release): {{currentTag}} [skip ci]",
+  "compareUrlFormat":"https://dev.azure.com/dwrdev/_git/projector/branchCompare?baseVersion=GT{{previousTag}}&targetVersion=GT{{currentTag}}",
+  "commitUrlFormat": "https://dev.azure.com/dwrdev/_git/projector/commit/{{hash}}"
+}

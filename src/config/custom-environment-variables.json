@@ -1,0 +1,36 @@
+{
+  "agile": {
+    "serviceProvider": "AGILE_SERVICE_PROVIDER",
+    "baseUrl": "AGILE_BASE_URL",
+    "accessToken": "AGILE_ACCESS_TOKEN",
+    "project": {
+      "name": "AGILE_PROJECT_NAME"
+    }
+  },
+  "repo": {
+    "serviceProvider": "REPO_SERVICE_PROVIDER",
+    "name": "REPO_NAME",
+    "owner": "REPO_OWNER"
+  },
+  "playbook": {
+    "accessToken": "PLAYBOOK_ACCESS_TOKEN"
+  },
+  "appInsights": {
+    "instrumentationKey": "APP_INSIGHTS_INSTRUMENTATION_KEY",
+    "enabled": "TELEMETRY_ENABLED"
+  },
+  "test": {
+    "variable1": "TEST_CONFIG_ENV_VAR_1",
+    "variable2": "TEST_CONFIG_ENV_VAR_2",
+    "azdo": {
+      "baseUrl": "TEST_AZURE_DEVOPS_BASE_URL",
+      "projectName": "TEST_AZURE_DEVOPS_PROJECT_NAME",
+      "accessToken": "TEST_AZURE_DEVOPS_ACCESS_TOKEN"
+    },
+    "github": {
+      "accessToken": "TEST_GITHUB_ACCESS_TOKEN",
+      "baseUrl": "TEST_GITHUB_BASE_URL",
+      "repoName": "TEST_GITHUB_REPO_NAME"
+    }
+  }
+}

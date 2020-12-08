@@ -1,0 +1,71 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - src/*
+      - README.md
+      - package.json
+      - package-lock.json
+      - tsconfig.json
+      - pipelines/publish.yml
+      - .versionrc.json
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - group: ci-variables
+
+steps:
+  - checkout: self
+    persistCredentials: true
+    
+  - template: templates/lint-and-build.yml
+
+  - template: templates/test-and-coverage.yml
+    parameters:
+      install: false
+      int_tests: false
+
+  - task: Bash@3
+    displayName: 'Set Git Config'
+    inputs:
+      targetType: inline
+      script: |
+        git config --global user.email "azure@bot.com"
+        git config --global user.name "azurebot"
+
+  - task: Npm@1
+    displayName: 'Version Package'
+    inputs:
+      command: custom
+      customCommand: run version:rev
+
+  - task: Npm@1
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    displayName: 'Publish NPM Package'
+    inputs:
+      command: publish
+      publishEndpoint: publicNpmRegistry
+
+  - task: Npm@1
+    displayName: 'Generate Documentation'
+    inputs:
+      command: custom
+      customCommand: run docs:generate   
+  
+  - task: Bash@3
+    displayName: 'Amend Previous Commit with Generated Docs'
+    inputs:
+      targetType: inline
+      script: |
+        git commit -a --amend --no-edit
+
+  - task: Bash@3
+    displayName: 'Push Changes to Repo'
+    inputs:
+      targetType: inline
+      script: |
+        git push --follow-tags origin HEAD:$(Build.SourceBranchName)

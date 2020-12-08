@@ -1,0 +1,20 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "test-current",
+      "type": "node",
+      "request": "launch",
+      "program": "./node_modules/.bin/jest",
+      "args": [
+        "${fileBasename}"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
+      "windows": {
+        "program": "node_modules/jest/bin/jest"
+      }
+    }
+  ]
+}

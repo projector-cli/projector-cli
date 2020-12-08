@@ -1,0 +1,20 @@
+{
+  "name": "Node.js & TypeScript",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      "VARIANT": "14"
+    }
+  },
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  "extensions": [
+    "davidanson.vscode-markdownlint",
+    "dbaeumer.vscode-eslint",
+    "orta.vscode-jest"
+  ],
+  "forwardPorts": [],
+  "remoteUser": "node",
+  "postCreateCommand": "npm ci"
+}

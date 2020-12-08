@@ -1,0 +1,47 @@
+parameters:
+  install: true
+  int_tests: true
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '14.x'
+    displayName: 'Install Node.js'
+
+  - task: Npm@1
+    condition: eq(${{parameters.install}}, true)
+    displayName: Install dependencies
+    inputs:
+      command: custom
+      customCommand: ci
+
+  - task: Npm@1
+    condition: eq(${{parameters.int_tests}}, true)
+    displayName: Run tests and output code coverage
+    inputs:
+      command: custom
+      customCommand: run test:coverage -- --coverageReporters=cobertura
+    env:
+      NODE_OPTIONS: --unhandled-rejections=strict
+      # Need a Personal Access Token to create issues, projects, milestones, etc.
+      # for the playground repo (needed for integration tests)
+      TEST_GITHUB_ACCESS_TOKEN: $(GITHUB_PERSONAL_ACCESS_TOKEN)
+      TEST_AZURE_DEVOPS_PROJECT_NAME: $(AZURE_DEVOPS_PROJECT_NAME)
+      TEST_AZURE_DEVOPS_BASE_URL: $(AZURE_DEVOPS_BASE_URL)
+      TEST_AZURE_DEVOPS_ACCESS_TOKEN: $(AZURE_DEVOPS_ACCESS_TOKEN)
+      TEST_GITHUB_BASE_URL: $(GITHUB_BASE_URL)
+      TEST_GITHUB_REPO_NAME: $(GITHUB_REPO_NAME)
+  
+  - task: Npm@1
+    condition: eq(${{parameters.int_tests}}, false)
+    displayName: Run unit tests
+    inputs:
+      command: custom
+      customCommand: run test:unit
+  
+  - task: PublishCodeCoverageResults@1
+    displayName: Publish code coverage results
+    inputs: 
+      codeCoverageTool: Cobertura # or JaCoCo
+      summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
+      reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'

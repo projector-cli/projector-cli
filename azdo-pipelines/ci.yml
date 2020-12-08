@@ -1,0 +1,25 @@
+name: ci
+
+variables:
+- group: ci-variables
+- name: npm_config_cache
+  value: $(Pipeline.Workspace)/.npm
+
+pr:
+  branches:
+    include:
+    - main
+
+stages:
+- stage: quality
+  displayName: Quality Gates
+  jobs:
+  - job: lint_and_build
+    displayName: Lint & Build
+    steps:
+    - template: templates/lint-and-build.yml
+
+  - job: test_and_coverage
+    displayName: Test & Coverage
+    steps:
+      - template: templates/test-and-coverage.yml
