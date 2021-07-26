@@ -67,6 +67,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GH_PAT }}
         AZURE_DEVOPS_PROJECT_NAME: ${{ secrets.AZURE_DEVOPS_PROJECT_NAME }}
         AZURE_DEVOPS_BASE_URL: ${{ secrets.AZURE_DEVOPS_BASE_URL }}
+        TEST_AZDO_ACCESS_TOKEN: ${{ secrets.AZURE_DEVOPS_ACCESS_TOKEN }}
         AZURE_DEVOPS_ACCESS_TOKEN: ${{ secrets.AZURE_DEVOPS_ACCESS_TOKEN }}
 
     # Validate code coverage using codecov.yml
