@@ -22,7 +22,8 @@ It aims to reduce friction, time and effort for developer teams in the following
 
 - **Discovering** and **consuming** content from an engineering playbook, such as the [Code-With Engineering Playbook](https://github.com/Microsoft/code-with-engineering-playbook).
 - Creating **templatized work items** within Agile providers (e.g. Azure DevOps, Jira, GitHub).
-  This can be used to create shared "checklists" of stories/features/tasks that should exist within every engagement and add them right to the developer team's backlog
+  This can be used to create shared "checklists" of stories/features/tasks that should exist within every engagement and add them right to the developer team's backlog.
+  These are also known as **packaged sprints**.
 - **Creating a sprint schedule** for the project within the Agile provider.
   Rather than clicking around Azure DevOps every week to create a new sprint, this is a one command execution that will generate as many sprints as required of the desired length and start date.
 - Opening **commonly used links** in your playbook.
