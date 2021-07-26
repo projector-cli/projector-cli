@@ -1,0 +1,92 @@
+on:
+  pull_request:
+    branches:
+      - main
+
+name: Quality Gates
+jobs:
+  build:
+    name: Lint & Build
+    runs-on: ubuntu-latest
+    steps:
+    # Check out repo
+    - uses: actions/checkout@main
+      with:
+        fetch-depth: 0
+
+    # Cache node modules
+    - name: Cache node_modules
+      id: cache-modules
+      uses: actions/cache@v1
+      with:
+        path: node_modules
+        key: ${{ runner.OS }}-build-${{ hashFiles('package.json') }}
+
+    # Install dependencies - use cache if possible
+    - name: install dependencies
+      if: steps.cache-modules.outputs.cache-hit != 'true'
+      run: npm ci
+
+    # Run linting
+    - name: lint
+      run: npm run lint
+
+    # Build package
+    - name: build
+      run: npm run build
+
+  test:
+    name: Test & Coverage
+    runs-on: ubuntu-latest
+    steps:
+    # Check out repo
+    - uses: actions/checkout@main
+      with:
+        fetch-depth: 0
+
+    # Cache node modules
+    - name: Cache node_modules
+      id: cache-modules
+      uses: actions/cache@v1
+      with:
+        path: node_modules
+        key: ${{ runner.OS }}-build-${{ hashFiles('package.json') }}
+
+    # Install dependencies - use cache if possible
+    - name: install dependencies
+      if: steps.cache-modules.outputs.cache-hit != 'true'
+      run: npm ci
+
+    # Run tests and output code coverage
+    - name: Test coverage
+      run: npm run test:coverage
+      env:
+        NODE_OPTIONS: --unhandled-rejections=throw
+        # Need a Personal Access Token to create issues, projects, milestones, etc.
+        # for the playground repo (needed for integration tests)
+        GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+        AZURE_DEVOPS_PROJECT_NAME: ${{ secrets.AZURE_DEVOPS_PROJECT_NAME }}
+        AZURE_DEVOPS_BASE_URL: ${{ secrets.AZURE_DEVOPS_BASE_URL }}
+        AZURE_DEVOPS_ACCESS_TOKEN: ${{ secrets.AZURE_DEVOPS_ACCESS_TOKEN }}
+
+    # Validate code coverage using codecov.yml
+    - uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        fail_ci_if_error: true
+
+  sonar:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+    steps:
+    # Check out repo
+    - uses: actions/checkout@main
+      with:
+        fetch-depth: 0
+
+    # Analyze with Sonar Cloud
+    - name: Analyze with SonarCloud
+      uses: sonarsource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

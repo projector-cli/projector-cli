@@ -1,0 +1,74 @@
+# On all pushes to main, version package and push to NPM
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '.vscode/**'
+      - 'docs/**'
+      - 'README.md'
+      - '.env.sample'
+      - '.gitignore'
+      - 'codecov.yml'
+      - 'jest.*.js'
+
+name: Publish
+jobs:
+  all:
+    name: Publish
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@main
+      with:
+        fetch-depth: 0
+
+    # Cache node modules
+    - name: Cache node_modules
+      id: cache-modules
+      uses: actions/cache@v1
+      with:
+        path: node_modules
+        key: ${{ runner.OS }}-build-${{ hashFiles('package.json') }}
+
+    # Install dependencies - cache if possible
+    - name: install dependencies
+      if: steps.cache-modules.outputs.cache-hit != 'true'
+      run: npm ci
+
+    # Run linting
+    - name: lint
+      run: npm run lint
+    
+    # Build the package
+    - name: build
+      run: npm run build
+    
+    # Run test coverage on branch
+    - name: Test coverage
+      run: npm run test:coverage
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+        AZURE_DEVOPS_PROJECT_NAME: ${{ secrets.AZURE_DEVOPS_PROJECT_NAME }}
+        AZURE_DEVOPS_BASE_URL: ${{ secrets.AZURE_DEVOPS_BASE_URL }}
+        AZURE_DEVOPS_ACCESS_TOKEN: ${{ secrets.AZURE_DEVOPS_ACCESS_TOKEN }}
+
+    # Validate code coverage using codecov.yml
+    - uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        fail_ci_if_error: true
+
+    # Analyze with Sonar Cloud
+    - name: Analyze with SonarCloud
+      uses: sonarsource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    
+    # Version the package and release on NPM
+    - name: Release
+      uses: mikeal/merge-release@v4.0.7
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
