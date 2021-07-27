@@ -64,7 +64,7 @@ jobs:
         NODE_OPTIONS: --unhandled-rejections=throw
         # Need a Personal Access Token to create issues, projects, milestones, etc.
         # for the playground repo (needed for integration tests)
-        GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+        GH_PAT: ${{ secrets.GH_PAT }}
         AZURE_DEVOPS_PROJECT_NAME: ${{ secrets.AZURE_DEVOPS_PROJECT_NAME }}
         AZURE_DEVOPS_BASE_URL: ${{ secrets.AZURE_DEVOPS_BASE_URL }}
         TEST_AZDO_ACCESS_TOKEN: ${{ secrets.AZURE_DEVOPS_ACCESS_TOKEN }}
@@ -89,5 +89,5 @@ jobs:
     - name: Analyze with SonarCloud
       uses: sonarsource/sonarcloud-github-action@master
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_PAT : ${{ secrets.GH_PAT }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
