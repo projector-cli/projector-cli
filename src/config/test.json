@@ -8,7 +8,8 @@
     "variable1": "json",
     "github": {
       "baseUrl": "https://github.com/projector-cli",
-      "repoName": "projector-playground"
+      "repoName": "projector-playground",
+      "accessToken": "GH_PAT"
     },
     "azdo": {
       "baseUrl": "https://dev.azure.com/projector-cli",
