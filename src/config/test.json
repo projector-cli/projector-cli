@@ -9,7 +9,7 @@
     "github": {
       "baseUrl": "https://github.com/projector-cli",
       "repoName": "projector-playground",
-      "accessToken": "GITHUB_TOKEN"
+      "accessToken": "GH_PAT"
     },
     "azdo": {
       "baseUrl": "https://dev.azure.com/projector-cli",
