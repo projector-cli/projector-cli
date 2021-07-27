@@ -1,0 +1,33 @@
+name: Markdown Check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  md-check:
+    name: Markdown Check
+    runs-on: ubuntu-latest
+    steps:
+    # https://github.com/actions/checkout
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # Cache node modules
+    - name: Cache node_modules
+      id: cache-modules
+      uses: actions/cache@v1
+      with:
+        path: node_modules
+        key: ${{ runner.OS }}-build-${{ hashFiles('package.json') }}
+
+    # Install dependencies - use cache if possible
+    - name: install dependencies
+      if: steps.cache-modules.outputs.cache-hit != 'true'
+      run: npm ci
+
+    - name: Lint check
+      run: npm run lint
