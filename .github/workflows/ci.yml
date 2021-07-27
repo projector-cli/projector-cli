@@ -36,7 +36,7 @@ jobs:
       run: npm run build
 
   test:
-    name: Test & Coverage
+    name: Unit Tests
     runs-on: ubuntu-latest
     steps:
     # Check out repo
@@ -57,8 +57,8 @@ jobs:
       if: steps.cache-modules.outputs.cache-hit != 'true'
       run: npm ci
 
-    # Run tests and output code coverage
-    - name: Test coverage
+    # Run unit tests
+    - name: Run unit tests
       run: npm run test:unit
 
     # Validate code coverage using codecov.yml
