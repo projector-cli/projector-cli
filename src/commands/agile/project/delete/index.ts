@@ -1,1 +1,0 @@
-export { agileProjectDeleteCommandFactory } from "./agileProjectDelete";

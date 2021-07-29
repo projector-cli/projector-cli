@@ -1,0 +1,1 @@
+export { projectTemplateDeployCommandFactory } from "./projectTemplateDeploy";
