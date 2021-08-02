@@ -15,8 +15,6 @@ export enum ConfigKey {
   // App Insights Configuration Keys
   AppInsightsInstrumentationKey = "appInsights.instrumentationKey",
   AppInsightsEnabled = "appInsights.enabled",
-  // Links Configuration Keys
-  Links = "links",
   // Playbook Configuration keys
   PlaybookOwnerName = "playbook.owner",
   PlaybookRepoName = "playbook.repo",

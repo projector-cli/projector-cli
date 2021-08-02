@@ -3,7 +3,7 @@ process.env.TEST_CONFIG_ENV_VAR_1 = envVarValue1;
 
 import { ConfigKey, FileConstants } from "../constants";
 import { registerProviders } from "../initialization";
-import { Link, ServiceCollection } from "../models";
+import { ServiceCollection } from "../models";
 import { CliSimulator, ServiceSimulator } from "../test";
 import { Command } from "./command";
 
@@ -119,23 +119,6 @@ describe("Command", () => {
 
     // Assert
     expect(figlet.textSync).toBeCalledWith(originalText);
-  });
-
-  it("adds link commands", () => {
-    // Setup
-    const links: Link[] = [1, 2, 3].map((num: number) => {
-      return {
-        name: `my name ${num}`,
-        description: `my description ${num}`,
-        url: `https://${num}.com`,
-      };
-    });
-
-    // Act
-    const command = new Command().addLinkCommands(links);
-
-    // Assert
-    expect(command.commands).toHaveLength(links.length);
   });
 
   it("gets the markdown representation of the command", () => {
