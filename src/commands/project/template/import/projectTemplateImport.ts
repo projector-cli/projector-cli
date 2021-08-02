@@ -12,7 +12,7 @@ export interface AgileImportOptions extends AgileProviderOptions {
 export const projectTemplateImportCommandFactory = (): Command => {
   return new Command<AgileImportOptions>()
     .name("import")
-    .description("Work Item Import")
+    .description("Project Template Import")
     .optionInteractive({
       shortName: "-f",
       longName: "--format",

@@ -3,8 +3,8 @@ import { projectSprintsCommandFactory, projectTemplateCommandFactory } from ".";
 
 export const projectCommandFactory = (): Command => {
   return new Command()
-    .name("playbook")
-    .description("Interacting with the Code-With-Engineering Playbook")
+    .name("project")
+    .description("Interacting with a target project")
     .addSubCommand(projectSprintsCommandFactory())
     .addSubCommand(projectTemplateCommandFactory())
     .addPhoneTree();
