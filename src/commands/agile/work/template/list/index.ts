@@ -1,1 +1,0 @@
-export { agileWorkTemplateListCommandFactory } from "./agileWorkTemplateList";
