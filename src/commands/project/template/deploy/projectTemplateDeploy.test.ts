@@ -23,9 +23,9 @@ describe("Project Template Deploy Command", () => {
         contentService,
         inputService,
       });
-      const agileWorkCreate = projectTemplateDeployCommandFactory();
+      const projectTemplateDeploy = projectTemplateDeployCommandFactory();
 
-      await agileWorkCreate.setServiceCollection(serviceCollection).parseAsync(CliSimulator.createArgs());
+      await projectTemplateDeploy.setServiceCollection(serviceCollection).parseAsync(CliSimulator.createArgs());
       expect(inputService.multiChoiceQuestion).toHaveBeenCalled();
 
       expect(inputService.multiChoiceQuestion).toHaveBeenNthCalledWith(
@@ -69,9 +69,9 @@ describe("Project Template Deploy Command", () => {
         logger,
       });
 
-      const agileWorkCreate = projectTemplateDeployCommandFactory();
+      const projectTemplateDeploy = projectTemplateDeployCommandFactory();
 
-      await agileWorkCreate.setServiceCollection(serviceCollection).parseAsync(
+      await projectTemplateDeploy.setServiceCollection(serviceCollection).parseAsync(
         CliSimulator.createAgileArgs([
           {
             name: "--file",
@@ -134,9 +134,9 @@ describe("Project Template Deploy Command", () => {
         agileService,
       });
 
-      const agileWorkCreate = projectTemplateDeployCommandFactory();
+      const projectTemplateDeploy = projectTemplateDeployCommandFactory();
 
-      await agileWorkCreate.setServiceCollection(serviceCollection).parseAsync(
+      await projectTemplateDeploy.setServiceCollection(serviceCollection).parseAsync(
         CliSimulator.createAgileArgs([
           {
             name: "--file",
