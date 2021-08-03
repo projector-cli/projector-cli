@@ -1,4 +1,3 @@
-import { Link } from "../models/general/link";
 import { ConfigKey } from "../constants";
 import config from "config";
 import customEnvironmentVariables from "../config/custom-environment-variables.json";
@@ -12,15 +11,6 @@ export class Config {
 
   public static getValueWithDefault<T = string>(configKey: ConfigKey, defaultValue?: T): T | undefined {
     return config.has(configKey) ? config.get(configKey) : defaultValue;
-  }
-
-  public static getLink(name: string): Link {
-    const links = this.getValue<Link[]>(ConfigKey.Links);
-    const matchingLink = links.find((link) => link.name === name);
-    if (!matchingLink) {
-      throw new Error(`Missing link ${name} in config`);
-    }
-    return matchingLink;
   }
 
   public static getEnvironmentVariableName(configKey: ConfigKey): string {

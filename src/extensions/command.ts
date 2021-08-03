@@ -12,7 +12,6 @@ import {
   RepoProviderOptions,
   ServiceCollection,
 } from "../models";
-import { Link } from "../models/general/link";
 import {
   agileAccessTokenInteractiveOption,
   agileBaseUrlInteractiveOption,
@@ -26,7 +25,6 @@ import {
 } from "../options";
 import { AgileServiceProvider, RepoServiceProvider } from "../services";
 import { Config } from "../utils";
-import { urlCommand } from "./urlCommand";
 
 /**
  * Command extension class
@@ -286,11 +284,6 @@ export class Command<TOptions = any> extends CommanderCommand {
     this.addAction((serviceCollection: ServiceCollection) => {
       serviceCollection.logger.log(chalk.cyanBright(figlet.textSync(message)));
     });
-    return this;
-  }
-
-  public addLinkCommands(links: Link[]): Command<TOptions> {
-    links.forEach((link: Link) => this.addSubCommand(urlCommand(link)));
     return this;
   }
 
