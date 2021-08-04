@@ -1,14 +1,14 @@
-import { RepoTemplate, RepoService, RepoItem } from "../../../../models";
+import { RepoService, RepoItem, Template } from "../../../../models";
 import { ServiceSimulator, CliSimulator } from "../../../../test";
 import { playbookTemplateListCommandFactory } from "./playbookTemplateList";
 
 describe("Playbook Template List Command", () => {
   it("successfully calls the playbook service", async () => {
-    const templateFileContent: RepoTemplate[] = [
+    const templateFileContent: Template[] = [
       {
-        fileName: "fileName",
-        filePath: "file/path",
-        name: "testTemplate",
+        name: "fileName",
+        description: "",
+        items: [],
       },
     ];
 

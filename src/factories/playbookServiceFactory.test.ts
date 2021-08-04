@@ -12,13 +12,9 @@ describe("Playbook Service Factory", () => {
 
     RepoServiceFactory.get = jest.fn(() => ServiceSimulator.createTestRepoService());
 
-    PlaybookServiceFactory.get(
-      {
-        playbookAccessToken: accessToken,
-      },
-      ServiceSimulator.createTestObjectService(),
-      ServiceSimulator.createTestStorageService(),
-    );
+    PlaybookServiceFactory.get({
+      playbookAccessToken: accessToken,
+    });
 
     const expectedRepoOptions: RepoProviderOptions = {
       repoProvider: RepoServiceProvider.GitHub,
@@ -27,17 +23,13 @@ describe("Playbook Service Factory", () => {
       projectName: Config.getValue(ConfigKey.PlaybookRepoName),
     };
 
-    expect(RepoServiceFactory.get).toBeCalledWith(expectedRepoOptions, expect.anything());
+    expect(RepoServiceFactory.get).toBeCalledWith(expectedRepoOptions);
   });
 
   it("creates an unauthenticated playbook service", () => {
     RepoServiceFactory.get = jest.fn(() => ServiceSimulator.createTestRepoService());
 
-    PlaybookServiceFactory.get(
-      {},
-      ServiceSimulator.createTestObjectService(),
-      ServiceSimulator.createTestStorageService(),
-    );
+    PlaybookServiceFactory.get({});
 
     const expectedRepoOptions: RepoProviderOptions = {
       repoProvider: RepoServiceProvider.GitHub,
@@ -46,6 +38,6 @@ describe("Playbook Service Factory", () => {
       projectName: Config.getValue(ConfigKey.PlaybookRepoName),
     };
 
-    expect(RepoServiceFactory.get).toBeCalledWith(expectedRepoOptions, expect.anything());
+    expect(RepoServiceFactory.get).toBeCalledWith(expectedRepoOptions);
   });
 });

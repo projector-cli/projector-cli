@@ -2,7 +2,6 @@ import { getPersonalAccessTokenHandler } from "azure-devops-node-api";
 import { CoreApi } from "azure-devops-node-api/CoreApi";
 import { GitApi } from "azure-devops-node-api/GitApi";
 import { GitRepository } from "azure-devops-node-api/interfaces/TfvcInterfaces";
-import { ObjectService } from "../..";
 import { Repo, RepoItem, RepoProviderOptions } from "../../../models";
 import { BaseRepoService } from "../baseRepoService";
 
@@ -13,8 +12,8 @@ export class AzureDevOpsRepoService extends BaseRepoService {
   /* Git API */
   private gitApi: GitApi;
 
-  constructor(options: RepoProviderOptions, contentService: ObjectService<string>) {
-    super(options, contentService);
+  constructor(options: RepoProviderOptions) {
+    super(options);
 
     const { accessToken, baseUrl, projectName } = options;
 

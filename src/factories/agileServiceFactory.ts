@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AgileProviderOptions, AgileService, InputService, Logger } from "../models";
-import { AgileServiceProvider } from "../services";
+import { AgileProviderOptions, Logger } from "../models";
+import { AgileService, AgileServiceProvider, InputService } from "../services";
 
 export class AgileServiceFactory {
   private static registry: { [providerName: string]: any } = {};

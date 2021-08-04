@@ -1,19 +1,5 @@
-import {
-  AgileService,
-  BacklogItemTemplate,
-  InputService,
-  Logger,
-  PlaybookService,
-  Repo,
-  RepoItem,
-  RepoService,
-  RepoTemplate,
-  StorageService,
-  Parameters,
-  ServiceCollection,
-  Metrics,
-} from "../../models";
-import { ObjectService } from "../../services";
+import { Template, Logger, Repo, RepoItem, RepoService, Parameters, ServiceCollection, Metrics } from "../../models";
+import { AgileService, InputService, PlaybookService, StorageService } from "../../services";
 import { ModelSimulator } from "./modelSimulator";
 import { MockAgileServiceFunctions, SimulatorAgileService } from "./simulatorAgileService";
 
@@ -28,9 +14,9 @@ interface OptionalServiceCollection {
   agileService?: AgileService;
   repoService?: RepoService;
   playbookService?: PlaybookService;
-  backlogItemTemplateService?: ObjectService<BacklogItemTemplate>;
-  parameterService?: ObjectService<Parameters>;
-  contentService?: ObjectService<string>;
+  templateService?: StorageService<Template>;
+  parameterService?: StorageService<Parameters>;
+  configService?: StorageService<string>;
   logger?: Logger;
   metrics?: Metrics;
   inputService?: InputService;
@@ -48,9 +34,9 @@ export class ServiceSimulator {
       agileService: existingAgileService,
       repoService: existingRepoService,
       playbookService: existingPlaybookService,
-      backlogItemTemplateService: existingBacklogItemTemplateService,
+      templateService: existingTemplateService,
       parameterService: existingParameterService,
-      contentService: existingContentService,
+      configService: existingConfigService,
       logger: existingLogger,
       metrics: existingMetrics,
       inputService: existingInputService,
@@ -64,15 +50,13 @@ export class ServiceSimulator {
     const playbookService: PlaybookService = (existingPlaybookService || ServiceSimulator.createTestPlaybookService())!;
 
     const serviceCollection: ServiceCollection = {
-      parameterService: (existingParameterService || ServiceSimulator.createTestObjectService<Parameters>())!,
-      backlogItemTemplateService: (existingBacklogItemTemplateService ||
-        ServiceSimulator.createTestObjectService<BacklogItemTemplate>())!,
-      contentService: (existingContentService || ServiceSimulator.createTestObjectService<string>())!,
+      parameterService: (existingParameterService || ServiceSimulator.createTestStorageService<Parameters>())!,
+      templateService: (existingTemplateService || ServiceSimulator.createTestStorageService<Template>())!,
+      configService: (existingConfigService || ServiceSimulator.createTestStorageService<string>())!,
       logger,
       metrics,
       inputService,
       getPlaybookService: () => playbookService,
-      getRepoService: () => repoService,
       getAgileService: () => agileService,
     };
 
@@ -96,39 +80,23 @@ export class ServiceSimulator {
       latestCommit: jest.fn(),
       listRepoItems: jest.fn(() => Promise.resolve([repoItem!])),
       getRepoItem: jest.fn(() => Promise.resolve(repoItem!)),
-      downloadRepoItem: jest.fn(),
     };
   }
 
-  public static createTestStorageService(readContent?: string, writeFunction?: jest.Mock): StorageService {
+  public static createTestStorageService<T>(
+    readContent?: T,
+    writeFunction?: jest.Mock,
+    listFunction?: jest.Mock,
+  ): StorageService<T> {
     return {
-      find: jest.fn(),
       read: jest.fn(() => Promise.resolve(readContent)),
       write: writeFunction || jest.fn(),
-      list: jest.fn(),
+      list: listFunction || jest.fn(),
     };
   }
 
-  public static createTestObjectService<T>(itemToGet?: T, listOfItems?: string[]): ObjectService<T> {
-    const objectService = new ObjectService<T>(this.createTestStorageService());
-    objectService.get = itemToGet ? jest.fn(async () => itemToGet) : jest.fn();
-    objectService.list = listOfItems ? jest.fn(() => Promise.resolve(listOfItems || [])) : jest.fn();
-
-    objectService.getIfExists = jest.fn();
-    objectService.parse = jest.fn();
-    objectService.set = jest.fn();
-
-    return objectService;
-  }
-
-  public static createTestPlaybookService(
-    templates?: RepoTemplate[],
-    backlogItemTemplates?: BacklogItemTemplate[],
-  ): PlaybookService {
+  public static createTestPlaybookService(templates?: Template[]): PlaybookService {
     return {
-      downloadTemplate: jest.fn(),
-      getBacklogItemTemplates: jest.fn(() => Promise.resolve(backlogItemTemplates || [])),
-      getRepoItem: jest.fn(),
       getTemplates: jest.fn(() => Promise.resolve(templates || [])),
     };
   }

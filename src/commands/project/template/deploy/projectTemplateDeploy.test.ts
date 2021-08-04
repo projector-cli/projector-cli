@@ -1,10 +1,11 @@
-import { BacklogItem, AgileService, BacklogItemTemplate } from "../../../../models";
+import { BacklogItem, Template } from "../../../../models";
 import { ModelSimulator, ServiceSimulator, CliSimulator } from "../../../../test";
 import { projectTemplateDeployCommandFactory } from ".";
+import { AgileService } from "../../../../services";
 
 describe("Project Template Deploy Command", () => {
   const backlogItemFileName = "myItems.json";
-  const backlogItemTemplate = ModelSimulator.createTestBacklogItemTemplate();
+  const template = ModelSimulator.createTestTemplate();
 
   describe("no arguments", () => {
     it("chooses from list of files in working directory", async () => {
@@ -12,15 +13,22 @@ describe("Project Template Deploy Command", () => {
       const options = [userChoice, "optionB.yml", "optionC.yaml"];
       const allFiles = [...options, "optionD.txt"];
 
-      const contentService = ServiceSimulator.createTestObjectService<string>(undefined, allFiles);
       const inputService = ServiceSimulator.createTestInputService({
         multiChoiceAnswer: userChoice,
       });
       inputService.multiChoiceQuestion = jest.fn(async () => {
         return "";
       });
+
+      const templateService = ServiceSimulator.createTestStorageService<Template>(
+        undefined,
+        undefined,
+        jest.fn(() => {
+          return allFiles;
+        }),
+      );
       const serviceCollection = ServiceSimulator.createTestServiceCollection({
-        contentService,
+        templateService,
         inputService,
       });
       const projectTemplateDeploy = projectTemplateDeployCommandFactory();
@@ -28,8 +36,7 @@ describe("Project Template Deploy Command", () => {
       await projectTemplateDeploy.setServiceCollection(serviceCollection).parseAsync(CliSimulator.createArgs());
       expect(inputService.multiChoiceQuestion).toHaveBeenCalled();
 
-      expect(inputService.multiChoiceQuestion).toHaveBeenNthCalledWith(
-        1,
+      expect(inputService.multiChoiceQuestion).toHaveBeenCalledWith(
         "What is the name of the file containing your backlog items?",
         options.concat("other"),
       );
@@ -59,12 +66,10 @@ describe("Project Template Deploy Command", () => {
         logger,
       );
 
-      const backlogItemTemplateService = ServiceSimulator.createTestObjectService<BacklogItemTemplate>(
-        backlogItemTemplate,
-      );
+      const templateService = ServiceSimulator.createTestStorageService<Template>(template);
 
       const serviceCollection = ServiceSimulator.createTestServiceCollection({
-        backlogItemTemplateService,
+        templateService,
         agileService,
         logger,
       });
@@ -80,7 +85,7 @@ describe("Project Template Deploy Command", () => {
         ]),
       );
 
-      expect(createBacklogItems).toBeCalledWith(backlogItemTemplate.items);
+      expect(createBacklogItems).toBeCalledWith(template.items);
 
       const getChildCount = (item: BacklogItem): number => {
         const { children } = item;
@@ -99,12 +104,12 @@ describe("Project Template Deploy Command", () => {
 
       let childCount = 0;
 
-      backlogItemTemplate.items.forEach((item: BacklogItem) => {
+      template.items.forEach((item: BacklogItem) => {
         childCount += getChildCount(item);
       });
 
       // Log header and one line for each backlog item
-      expect(logger.log).toBeCalledTimes(backlogItemTemplate.items.length + childCount);
+      expect(logger.log).toBeCalledTimes(template.items.length + childCount);
       expect(logger.logHeader).toBeCalledTimes(1);
     });
 

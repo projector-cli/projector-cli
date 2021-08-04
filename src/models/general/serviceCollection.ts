@@ -1,20 +1,16 @@
-import { ObjectService } from "../../services";
-import { AgileService, BacklogItemTemplate } from "../agile";
-import { AgileProviderOptions, PlaybookOptions, RepoProviderOptions } from "../options";
-import { PlaybookService } from "../playbook";
-import { RepoService } from "../repo";
-import { InputService } from "./inputService";
+import { Template } from "../agile";
+import { AgileProviderOptions, PlaybookOptions } from "../options";
+import { AgileService, InputService, PlaybookService, StorageService } from "../../services";
 import { Logger } from "./logger";
 import { Metrics } from "./metrics";
 import { Parameters } from "./parameters";
 
 export interface ServiceCollection {
   getAgileService: (options: AgileProviderOptions) => AgileService;
-  getRepoService: (options: RepoProviderOptions) => RepoService;
   getPlaybookService: (options: PlaybookOptions) => PlaybookService;
-  backlogItemTemplateService: ObjectService<BacklogItemTemplate>;
-  parameterService: ObjectService<Parameters>;
-  contentService: ObjectService<string>;
+  templateService: StorageService<Template>;
+  parameterService: StorageService<Parameters>;
+  configService: StorageService<string>;
   inputService: InputService;
   logger: Logger;
   metrics?: Metrics;

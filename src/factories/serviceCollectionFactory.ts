@@ -1,18 +1,9 @@
-import {
-  AgileProviderOptions,
-  BacklogItemTemplate,
-  Parameters,
-  PlaybookOptions,
-  RepoProviderOptions,
-  ServiceCollection,
-} from "../models";
-import { FileStorageService, LoggerProvider, MetricsProvider, ObjectService } from "../services";
-import { InquirerInputService } from "../services/input/inquirerInputService";
+import { AgileProviderOptions, Template, Parameters, PlaybookOptions, ServiceCollection } from "../models";
+import { FileStorageService, InquirerInputService, LoggerProvider, MetricsProvider } from "../services";
 import { AgileServiceFactory } from "./agileServiceFactory";
 import { LoggerFactory } from "./loggerFactory";
 import { MetricsFactory } from "./metricsFactory";
 import { PlaybookServiceFactory } from "./playbookServiceFactory";
-import { RepoServiceFactory } from "./repoServiceFactory";
 
 /**
  * Factory for collections of services
@@ -25,20 +16,17 @@ export class ServiceCollectionFactory {
    */
   public static create(): ServiceCollection {
     const logger = LoggerFactory.get(LoggerProvider.Composite);
-    const localFileStorageService = new FileStorageService(process.cwd(), logger);
-    const parameterService = new ObjectService<Parameters>(localFileStorageService);
-    const backlogItemTemplateService = new ObjectService<BacklogItemTemplate>(localFileStorageService);
-    const contentService = new ObjectService<string>(localFileStorageService);
+    const parameterService = new FileStorageService<Parameters>(process.cwd(), logger);
+    const templateService = new FileStorageService<Template>(process.cwd(), logger);
+    const configService = new FileStorageService<string>(process.cwd(), logger);
     const inputService = new InquirerInputService(logger);
 
     return {
       getAgileService: (options: AgileProviderOptions) => AgileServiceFactory.get(options, inputService, logger),
-      getRepoService: (options: RepoProviderOptions) => RepoServiceFactory.get(options, contentService),
-      getPlaybookService: (options: PlaybookOptions) =>
-        PlaybookServiceFactory.get(options, contentService, localFileStorageService),
-      backlogItemTemplateService,
+      getPlaybookService: (options: PlaybookOptions) => PlaybookServiceFactory.get(options),
+      templateService,
       parameterService,
-      contentService,
+      configService,
       logger,
       inputService,
       metrics: MetricsFactory.getIfRegistered(MetricsProvider.AppInsights),

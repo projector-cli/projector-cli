@@ -1,9 +1,7 @@
 import { join } from "path";
 import { writeFile } from "fs/promises";
 process.env.NODE_CONFIG_DIR = join(__dirname, "..", "config");
-import { ConsoleLogger } from "../services";
-import { InquirerInputService } from "../services/input/inquirerInputService";
-import { InputService } from "../models";
+import { ConsoleLogger, InputService, InquirerInputService } from "../services";
 
 /**
  * Get the base URL for the Azure DevOps organization

@@ -15,8 +15,9 @@ export const projectTemplateDeployCommandFactory = (): Command => {
       longName: "--file",
       prompt: "What is the name of the file containing your backlog items?",
       choices: async (serviceCollection: ServiceCollection) => {
-        const { contentService } = serviceCollection;
-        const files = await contentService.list();
+        const { templateService } = serviceCollection;
+
+        const files = await templateService.list();
 
         return [
           ...files?.filter(
@@ -28,7 +29,7 @@ export const projectTemplateDeployCommandFactory = (): Command => {
     })
     .addAgileProviderOptions()
     .addAction(async (serviceCollection: ServiceCollection, options: AgileInitializationOptions) => {
-      const { logger, getAgileService, backlogItemTemplateService, inputService } = serviceCollection;
+      const { logger, getAgileService, templateService, inputService } = serviceCollection;
       const agileService = getAgileService(options);
 
       // The command will give the user the option to choose between files in the working directory
@@ -38,7 +39,7 @@ export const projectTemplateDeployCommandFactory = (): Command => {
           ? await inputService.askQuestion("What is the name of the file containing your backlog items?")
           : options.file;
 
-      const template = await backlogItemTemplateService.get(inputFile);
+      const template = await templateService.read(inputFile);
 
       if (template) {
         // Create Backlog Items

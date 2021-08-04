@@ -1,4 +1,3 @@
-import { ObjectService } from "../services";
 import { PlaybookServiceFactory } from "./playbookServiceFactory";
 import { ServiceCollectionFactory } from "./serviceCollectionFactory";
 import { registerProviders } from "../initialization";
@@ -13,19 +12,15 @@ describe("Service Collection Factory", () => {
 
   it("creates a service collection", () => {
     const {
-      backlogItemTemplateService,
-      contentService,
+      templateService,
       getAgileService,
       getPlaybookService,
-      getRepoService,
       parameterService,
     } = ServiceCollectionFactory.create();
 
-    expect(backlogItemTemplateService).toBeDefined();
-    expect(contentService).toBeDefined();
+    expect(templateService).toBeDefined();
     expect(getAgileService).toBeDefined();
     expect(getPlaybookService).toBeDefined();
-    expect(getRepoService).toBeDefined();
     expect(parameterService).toBeDefined();
 
     PlaybookServiceFactory.get = jest.fn();
@@ -33,14 +28,12 @@ describe("Service Collection Factory", () => {
     RepoServiceFactory.get = jest.fn();
 
     getPlaybookService({});
-    expect(PlaybookServiceFactory.get).toBeCalledWith({}, expect.any(ObjectService), expect.anything());
+    expect(PlaybookServiceFactory.get).toBeCalledWith({});
 
     const agileOptions = ModelSimulator.createTestAgileProviderOptions();
     getAgileService(agileOptions);
     expect(AgileServiceFactory.get).toBeCalledWith(agileOptions, expect.anything(), expect.anything());
 
     const repoOptions = ModelSimulator.createTestRepoProviderOptions();
-    getRepoService(repoOptions);
-    expect(RepoServiceFactory.get).toBeCalledWith(repoOptions, expect.any(ObjectService));
   });
 });

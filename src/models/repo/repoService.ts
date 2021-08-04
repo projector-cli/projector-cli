@@ -63,14 +63,4 @@ export interface RepoService {
    * @returns {Promise<string>} Commit SHA
    */
   latestCommit: (repoName: string, branch?: string) => Promise<string>;
-
-  /**
-   * Downloads a repo item to a local path
-   *
-   * @param {string} repoName Repo name
-   * @param {string|undefined} path Path within repo
-   * @param {string|undefined} branch Branch of repo
-   * @param {string|undefined} outputPath Relative local path. Uses name of repo item as default
-   */
-  downloadRepoItem: (repoName: string, path?: string, outputPath?: string, branch?: string) => Promise<void>;
 }

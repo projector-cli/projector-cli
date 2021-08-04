@@ -1,8 +1,8 @@
 import { Octokit } from "@octokit/rest";
 import axios from "axios";
 import { basename } from "path";
-import { ObjectService } from "../..";
 import { Repo, RepoItem, RepoItemType, RepoProviderOptions } from "../../../models";
+import { Template } from "../../../models/agile/template";
 import { RegexExtractor } from "../../../utils";
 import { BaseRepoService } from "../baseRepoService";
 
@@ -10,8 +10,8 @@ export class GitHubRepoService extends BaseRepoService {
   private github: Octokit;
   private owner: string;
 
-  constructor(options: RepoProviderOptions, contentService: ObjectService<string>) {
-    super(options, contentService);
+  constructor(options: RepoProviderOptions) {
+    super(options);
 
     const { accessToken } = options;
 
@@ -65,12 +65,12 @@ export class GitHubRepoService extends BaseRepoService {
       if (!download_url) {
         throw new Error("Download_url unexpectedly null");
       } else if (includeContent) {
-        const content = (await axios.get<unknown>(download_url)).data;
+        const content = (await axios.get<Template>(download_url)).data;
         return {
           name: basename(path),
           type: RepoItemType.File,
           path,
-          content: typeof content === "string" ? content : JSON.stringify(content),
+          content,
         };
       } else {
         return {

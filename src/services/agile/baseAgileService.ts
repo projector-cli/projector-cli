@@ -1,15 +1,8 @@
 import { ConfigKey, NumberConstants } from "../../constants";
-import {
-  AgileProviderOptions,
-  AgileService,
-  BacklogItem,
-  InputService,
-  Logger,
-  Project,
-  Sprint,
-  SprintConfig,
-} from "../../models";
+import { AgileProviderOptions, BacklogItem, Logger, Project, Sprint, SprintConfig } from "../../models";
 import { Config, DateUtils } from "../../utils";
+import { AgileService } from "./agileService";
+import { InputService } from "../input";
 
 export abstract class BaseAgileService implements AgileService {
   constructor(protected config: AgileProviderOptions, protected inputService: InputService, protected logger: Logger) {}

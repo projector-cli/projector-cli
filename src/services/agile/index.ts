@@ -1,3 +1,4 @@
-export * from "./providers";
-export * from "./baseAgileService";
+export * from "./agileService";
 export * from "./agileServiceProvider";
+export * from "./baseAgileService";
+export * from "./providers";

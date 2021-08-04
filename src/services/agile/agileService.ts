@@ -1,6 +1,4 @@
-import { BacklogItem } from "./backlogItem";
-import { Project } from "./project";
-import { Sprint } from "./sprint";
+import { Project, BacklogItem, Sprint } from "../../models";
 
 export interface AgileService {
   // Projects

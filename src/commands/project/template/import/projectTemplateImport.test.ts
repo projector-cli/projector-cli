@@ -1,4 +1,4 @@
-import { BacklogItemType } from "../../../../models";
+import { BacklogItemType, Template } from "../../../../models";
 import { ServiceSimulator, CliSimulator } from "../../../../test";
 import { projectTemplateImportCommandFactory } from "./projectTemplateImport";
 
@@ -24,11 +24,11 @@ describe("Agile Work Import Command", () => {
     });
     const logger = ServiceSimulator.createTestLogger();
     const agileService = ServiceSimulator.createTestAgileService({ getBacklogItems }, inputService, logger);
-    const contentService = ServiceSimulator.createTestObjectService<string>();
+    const templateService = ServiceSimulator.createTestStorageService<Template>();
 
     const serviceCollection = ServiceSimulator.createTestServiceCollection({
       agileService,
-      contentService,
+      templateService,
       inputService,
       logger,
     });
@@ -47,10 +47,8 @@ describe("Agile Work Import Command", () => {
       ]),
     );
 
-    expect(contentService.set).toBeCalledWith<[string, string, string]>(expect.any(String), expect.any(String), "foo");
-
     // Log header and one line for each backlog item
     expect(logger.logHeader).toBeCalledTimes(1);
-    expect(logger.debug).toBeCalledTimes(2);
+    expect(templateService.write).toBeCalled();
   });
 });

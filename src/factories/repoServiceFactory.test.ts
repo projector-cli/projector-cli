@@ -1,5 +1,5 @@
 import { RepoServiceProvider } from "../services";
-import { ModelSimulator, ServiceSimulator, SimulatorRepoService } from "../test";
+import { ModelSimulator, SimulatorRepoService } from "../test";
 import { RepoServiceFactory } from "./repoServiceFactory";
 
 describe("Repo Service Factory", () => {
@@ -8,11 +8,6 @@ describe("Repo Service Factory", () => {
     RepoServiceFactory.register(RepoServiceProvider.Simulator, SimulatorRepoService);
 
     // Assert
-    expect(
-      RepoServiceFactory.get(
-        ModelSimulator.createTestRepoProviderOptions(),
-        ServiceSimulator.createTestObjectService<string>(),
-      ),
-    ).toBeDefined();
+    expect(RepoServiceFactory.get(ModelSimulator.createTestRepoProviderOptions())).toBeDefined();
   });
 });

@@ -114,11 +114,12 @@ export class Command<TOptions = any> extends CommanderCommand {
 
       // Ask user if they'd like to save to .env if configKey exists to save it
       if (configKey && (await inputService.confirmAction("Would you like to save to your local environment file?"))) {
-        const { contentService, logger } = serviceCollection;
-        const currentEnvFile = await contentService.getIfExists(FileConstants.envFileName);
+        const { configService, logger } = serviceCollection;
+        logger.log("TODO: Change.");
 
+        const currentEnvFile = await configService.read(FileConstants.envFileName);
         const updatedEnvFile = Config.getUpdatedEnvFileContents(configKey, answeredVal, currentEnvFile);
-        await contentService.set(FileConstants.envFileName, updatedEnvFile);
+        await configService.write(FileConstants.envFileName, updatedEnvFile);
         logger.log(`Saved to ${FileConstants.envFileName}`);
       }
     });
@@ -332,7 +333,7 @@ export class Command<TOptions = any> extends CommanderCommand {
     return toc;
   }
 
-  public setServiceCollection(serviceCollection?: ServiceCollection): Command {
+  public setServiceCollection(serviceCollection?: ServiceCollection): Command<TOptions> {
     if (serviceCollection) {
       this.serviceCollection = serviceCollection;
     }

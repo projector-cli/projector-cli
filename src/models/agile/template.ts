@@ -1,8 +1,7 @@
 import { BacklogItem } from "./backlogItem";
 
-export interface BacklogItemTemplate {
+export interface Template {
   name: string;
   description: string;
-  path: string;
   items: BacklogItem[];
 }

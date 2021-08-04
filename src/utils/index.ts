@@ -1,7 +1,6 @@
 export * from "./azureDevOpsUtils";
 export * from "./configUtils";
 export * from "./dateUtils";
-export * from "./downloadTemplates";
 export * from "./interpolator";
 export * from "./packageJson";
 export * from "./regexExtractor";

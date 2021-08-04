@@ -1,3 +1,4 @@
+import { InputService } from "../../../input";
 import { ConfigKey } from "../../../../constants";
 import {
   AgileProviderOptions,
@@ -6,7 +7,6 @@ import {
   GitHubIssue,
   GitHubLabel,
   GitHubMilestone,
-  InputService,
   Logger,
   Project,
   Sprint,
