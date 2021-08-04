@@ -33,7 +33,5 @@ describe("Service Collection Factory", () => {
     const agileOptions = ModelSimulator.createTestAgileProviderOptions();
     getAgileService(agileOptions);
     expect(AgileServiceFactory.get).toBeCalledWith(agileOptions, expect.anything(), expect.anything());
-
-    const repoOptions = ModelSimulator.createTestRepoProviderOptions();
   });
 });

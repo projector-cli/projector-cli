@@ -1,4 +1,5 @@
-import { AgileService, BacklogItem, BacklogItemType, Sprint } from "../../models";
+import { AgileService } from "../agile";
+import { BacklogItem, BacklogItemType, Sprint } from "../../models";
 import { ServiceSimulator, SimulatorAgileService } from "../../test";
 
 describe("Base Agile Service", () => {
