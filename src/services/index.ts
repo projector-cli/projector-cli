@@ -1,4 +1,5 @@
 export * from "./agile";
+export * from "./configuration";
 export * from "./input";
 export * from "./interpolate";
 export * from "./logger";

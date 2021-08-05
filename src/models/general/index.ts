@@ -1,5 +1,6 @@
 export * from "./actionHandler";
 export * from "./dictionary";
+export * from "./filetype";
 export * from "./logger";
 export * from "./metrics";
 export * from "./optionInteractive";

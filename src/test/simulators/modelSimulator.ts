@@ -12,6 +12,7 @@ import {
   RepoItemType,
   RepoProviderOptions,
   ServiceProviderOptions,
+  Configuration,
 } from "../../models";
 import { AgileServiceProvider, RepoServiceProvider } from "../../services";
 
@@ -109,6 +110,17 @@ export class ModelSimulator {
       number: 456,
       title: "This is my milestone",
       description: "This is my description",
+    };
+  }
+
+  public static createConfiguration(): Configuration {
+    return {
+      playbooks: [],
+      projects: [],
+      appInsights: {
+        instrumentationKey: "key",
+        enabled: true,
+      },
     };
   }
 }
