@@ -3,7 +3,6 @@ process.env.TEST_CONFIG_ENV_VAR_1 = envVarValue1;
 
 import { ConfigKey, FileConstants } from "../constants";
 import { registerProviders } from "../initialization";
-import { ServiceCollection } from "../models";
 import { CliSimulator, ServiceSimulator } from "../test";
 import { Command } from "./command";
 
@@ -290,10 +289,9 @@ describe("Command", () => {
         multiChoiceAnswer: userValue,
         confirmAnswer: true,
       });
+      const configService = ServiceSimulator.createTestStorageService<string>();
 
-      const contentService = ServiceSimulator.createTestObjectService<string>();
-
-      const serviceCollection = ServiceSimulator.createTestServiceCollection({ inputService, contentService });
+      const serviceCollection = ServiceSimulator.createTestServiceCollection({ inputService, configService });
 
       const command = new Command<{ myName: string }>()
         .setServiceCollection(serviceCollection)
@@ -309,26 +307,23 @@ describe("Command", () => {
         });
 
       await command.parseAsync(CliSimulator.createArgs());
-      expect(contentService.set).toBeCalledWith(FileConstants.envFileName, `TEST_CONFIG_ENV_VAR_2=${userValue}`);
+      expect(configService.write).toBeCalledWith(FileConstants.envFileName, `TEST_CONFIG_ENV_VAR_2=${userValue}`);
       // Asserts that action was actually called
       // Action contains the assertion
       expect(actionFn).toBeCalledWith(userValue);
     });
-
     it("uses dynamic choice initialization", async () => {
       const userValue = "optionA";
       const actionFn = jest.fn();
       const dynamicOptions = ["optionA", "optionB", "optionC"];
       const prompt = "this is my prompt";
 
-      const contentService = ServiceSimulator.createTestObjectService<string>(undefined, dynamicOptions);
       const inputService = ServiceSimulator.createTestInputService({
         multiChoiceAnswer: userValue,
       });
 
       const serviceCollection = ServiceSimulator.createTestServiceCollection({
         inputService,
-        contentService,
       });
 
       const command = new Command<{ myName: string }>()
@@ -337,12 +332,9 @@ describe("Command", () => {
           shortName: "-n",
           longName: "--my-name",
           prompt,
-          choices: async (serviceCollection: ServiceCollection) => {
-            const { contentService } = serviceCollection;
-            return contentService.list();
-          },
+          choices: dynamicOptions,
         })
-        .addAction((serviceCollection, options) => {
+        .addAction((_serviceCollection, options) => {
           const { myName } = options;
           actionFn(myName);
         });

@@ -1,5 +1,5 @@
-import { AgileProviderOptions, BacklogItem, InputService, Logger, Project, Sprint } from "../../models";
-import { BaseAgileService } from "../../services";
+import { AgileProviderOptions, BacklogItem, Logger, Project, Sprint } from "../../models";
+import { BaseAgileService, InputService } from "../../services";
 
 export interface MockAgileServiceFunctions {
   createProject?: (project: Project) => Promise<Project>;

@@ -1,9 +1,8 @@
-import { BacklogItemTemplate, BacklogItemType } from "../../models";
+import { Template, BacklogItemType } from "../../models";
 
-export const emptyBacklogItemTemplate: BacklogItemTemplate = {
+export const emptyTemplate: Template = {
   name: "empty",
   description: "Empty Backlog Items",
-  path: "/",
   items: [
     {
       name: "",

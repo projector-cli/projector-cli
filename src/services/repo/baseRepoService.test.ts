@@ -1,5 +1,5 @@
 import { RepoItem, RepoItemType } from "../../models";
-import { ModelSimulator, ServiceSimulator, SimulatorRepoService } from "../../test";
+import { ModelSimulator, SimulatorRepoService } from "../../test";
 
 describe("Base Repo Service", () => {
   const repo = "repo";
@@ -9,7 +9,7 @@ describe("Base Repo Service", () => {
     name: "item",
     path: "path",
     type: RepoItemType.File,
-    content: "my content",
+    content: ModelSimulator.createTestTemplate(),
   };
   const repoItemDirectory: RepoItem = {
     name: "item",
@@ -20,69 +20,27 @@ describe("Base Repo Service", () => {
         name: "child 1",
         path: "path/child 1",
         type: RepoItemType.File,
-        content: "content 1",
+        content: ModelSimulator.createTestTemplate(),
       },
       {
         name: "child 2",
         path: "path/child 2",
         type: RepoItemType.File,
-        content: "content 2",
+        content: ModelSimulator.createTestTemplate(),
       },
       {
         name: "child 3",
         path: "path/child 3",
         type: RepoItemType.File,
-        content: "content 3",
+        content: ModelSimulator.createTestTemplate(),
       },
     ],
   };
 
-  it("downlaods repo file to local directory", async () => {
-    // Setup
-    const getRepoItem = jest.fn(() => Promise.resolve(repoItemFile));
-    const objectService = ServiceSimulator.createTestObjectService("");
-    const service = new SimulatorRepoService(ModelSimulator.createTestRepoProviderOptions(), objectService);
-    service.getRepoItem = getRepoItem;
-    const outputPath = "outputPath";
-
-    // Act
-    await service.downloadRepoItem(repo, path, branch, outputPath);
-
-    // Assert
-    expect(getRepoItem).toBeCalledWith(repo, path, true, branch);
-    expect(objectService.set).toBeCalled();
-  });
-
-  it("downloads repo directory to local directory", async () => {
-    // Setup
-    const getRepoItem = jest.fn(() => Promise.resolve(repoItemDirectory));
-    const latestCommit = jest.fn();
-    const objectService = ServiceSimulator.createTestObjectService("");
-    const service = new SimulatorRepoService(ModelSimulator.createTestRepoProviderOptions(), objectService);
-    service.getRepoItem = getRepoItem;
-    service.latestCommit = latestCommit;
-    const outputPath = "outputPath";
-
-    // Act
-    await service.downloadRepoItem(repo, path, branch, outputPath);
-
-    // Assert
-    expect(getRepoItem).toBeCalledWith(repo, path, true, branch);
-
-    const { children } = repoItemDirectory;
-
-    // For TypeScript's benefit
-    if (children) {
-      expect(children.length).toBe(3);
-    } else {
-      expect(children).toBeDefined();
-    }
-  });
-
   it("lists repo items for a repo directory", async () => {
     // Setup
     const getRepoItem = jest.fn(() => Promise.resolve(repoItemDirectory));
-    const service = new SimulatorRepoService(ModelSimulator.createTestRepoProviderOptions(), undefined);
+    const service = new SimulatorRepoService(ModelSimulator.createTestRepoProviderOptions());
     service.getRepoItem = getRepoItem;
 
     // Act
@@ -96,7 +54,7 @@ describe("Base Repo Service", () => {
   it("returns an empty array for when listing items for a repo file", async () => {
     // Setup
     const getRepoItem = jest.fn(() => Promise.resolve(repoItemFile));
-    const service = new SimulatorRepoService(ModelSimulator.createTestRepoProviderOptions(), undefined);
+    const service = new SimulatorRepoService(ModelSimulator.createTestRepoProviderOptions());
     service.getRepoItem = getRepoItem;
 
     // Act

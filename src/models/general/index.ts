@@ -1,6 +1,5 @@
 export * from "./actionHandler";
 export * from "./dictionary";
-export * from "./inputService";
 export * from "./logger";
 export * from "./metrics";
 export * from "./optionInteractive";

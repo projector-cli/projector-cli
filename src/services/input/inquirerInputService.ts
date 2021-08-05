@@ -1,4 +1,5 @@
-import { Dictionary, InputService, Logger } from "../../models";
+import { Dictionary, Logger } from "../../models";
+import { InputService } from "../input";
 import { prompt } from "inquirer";
 
 export class InquirerInputService implements InputService {

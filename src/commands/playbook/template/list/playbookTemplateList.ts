@@ -1,6 +1,6 @@
 import { Command } from "../../../../extensions";
-import { ServiceCollection, PlaybookOptions, RepoTemplate } from "../../../../models";
-import { PlaybookTemplateCopyOptions } from "../copy/playbookTemplateInit";
+import { Template, ServiceCollection, PlaybookOptions } from "../../../../models";
+import { PlaybookTemplateCopyOptions } from "../copy/playbookTemplateCopy";
 
 export const playbookTemplateListCommandFactory = (): Command => {
   return new Command<PlaybookTemplateCopyOptions>()
@@ -11,13 +11,13 @@ export const playbookTemplateListCommandFactory = (): Command => {
       const { logger, getPlaybookService } = serviceCollection;
       const playbookService = getPlaybookService(options);
 
-      const templates: RepoTemplate[] = await playbookService.getTemplates();
+      const templates: Template[] = await playbookService.getTemplates();
 
       if (!templates || templates.length === 0) {
-        logger.log("Templates file appears to be empty.");
+        logger.log("Templates folder appears to be empty.");
       } else {
         logger.logHeader("Playbook Templates");
-        templates.forEach((template: RepoTemplate) => {
+        templates.forEach((template: Template) => {
           logger.log(`- ${template.name}`);
         });
       }

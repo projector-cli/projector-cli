@@ -63,7 +63,7 @@ describe("Register Providers", () => {
 
     providerOptions.forEach((options: RepoProviderOptions) => {
       // Act
-      const repoService = RepoServiceFactory.get(options, ServiceSimulator.createTestObjectService<string>());
+      const repoService = RepoServiceFactory.get(options);
 
       // Assert
       expect(repoService).toBeDefined();

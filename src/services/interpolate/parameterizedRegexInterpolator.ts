@@ -1,4 +1,5 @@
-import { InterpolatorService, Parameters } from "../../models";
+import { Parameters } from "../../models";
+import { InterpolatorService } from "./interpolatorService";
 
 export class ParameterizedRegexInterpolator implements InterpolatorService {
   private static variableRegex = /\${([a-zA-Z:_]+)}/g;

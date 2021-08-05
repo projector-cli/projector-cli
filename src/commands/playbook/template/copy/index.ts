@@ -1,1 +1,1 @@
-export { playbookTemplateInitCommandFactory } from "./playbookTemplateInit";
+export { playbookTemplateCopyCommandFactory } from "./playbookTemplateCopy";

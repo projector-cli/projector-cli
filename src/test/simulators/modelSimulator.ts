@@ -1,9 +1,8 @@
 import { ProjectVisibility } from "azure-devops-node-api/interfaces/CoreInterfaces";
-import path from "path";
 import {
   AgileProviderOptions,
   BacklogItem,
-  BacklogItemTemplate,
+  Template,
   BacklogItemType,
   GitHubLabel,
   GitHubMilestone,
@@ -17,11 +16,10 @@ import {
 import { AgileServiceProvider, RepoServiceProvider } from "../../services";
 
 export class ModelSimulator {
-  public static createTestBacklogItemTemplate(): BacklogItemTemplate {
+  public static createTestTemplate(): Template {
     return {
       name: "My Template",
       description: "This is my template",
-      path: path.sep,
       items: this.createTestBacklogItems(),
     };
   }
@@ -91,9 +89,7 @@ export class ModelSimulator {
       name: "my-item.txt",
       path: "item/path/txt",
       type: RepoItemType.File,
-      content: `\{
-        name: \"my-content\",
-      \}`,
+      content: this.createTestTemplate(),
     };
   }
 

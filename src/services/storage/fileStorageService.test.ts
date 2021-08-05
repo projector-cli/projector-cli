@@ -5,10 +5,14 @@ import { FileStorageService } from "./fileStorageService";
 describe("File Storage Service", () => {
   const root = "root";
   const logger = ServiceSimulator.createTestLogger();
-  const fileStorageService = new FileStorageService(root, logger);
+  const fileStorageService = new FileStorageService<test>(root, logger);
+
+  interface test {
+    name: string;
+  }
 
   // eslint-disable-next-line
-  const expected = "{name: \"jack\"}";
+  const expected = "{\"name\": \"jack\"}";
 
   beforeAll(() => {
     mockFs(
@@ -30,26 +34,18 @@ describe("File Storage Service", () => {
     const json = await fileStorageService.read("file.json", root);
 
     // Assert
-    expect(json).toEqual(expected);
+    expect(json).toEqual(JSON.parse(expected));
   });
 
   it("writes a file", async () => {
     // Setup
     const newFile = "new.json";
-    const newContent = JSON.stringify({ name: "zach" });
+    const newContent = { name: "zach" };
 
     // Act
     const wrote = await fileStorageService.write(newFile, newContent);
 
     // Assert
     expect(wrote).toBe(true);
-  });
-
-  it("finds a file", async () => {
-    const file = "file.json";
-
-    const found = await fileStorageService.find(file, "root/path/to/the/file/but/it/is/really/long");
-
-    expect(found).toEqual(expected);
   });
 });

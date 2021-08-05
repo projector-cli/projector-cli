@@ -6,11 +6,11 @@
 - [`pjr`](#pjr) - Root command for the Projector CLI
   - [`pjr playbook`](#pjr-playbook) - Interacting with the Code-With-Engineering Playbook
     - [`pjr playbook template`](#pjr-playbook-template) - Discover and use templates from the code-with engineering playbook
-      - [`pjr playbook template init`](#pjr-playbook-template-init) - Copy templates from playbook to local working directory
+      - [`pjr playbook template copy`](#pjr-playbook-template-copy) - Copy templates from playbook to local working directory
       - [`pjr playbook template list`](#pjr-playbook-template-list) - List available templates.
   - [`pjr project`](#pjr-project) - Interacting with a target project
     - [`pjr project sprints`](#pjr-project-sprints) - Sprint Management
-      - [`pjr project sprints create`](#pjr-project-sprints-create) - Create Sprints with Agile Provider
+      - [`pjr project sprints create`](#pjr-project-sprints-create) - Create Sprints in a Project
     - [`pjr project template`](#pjr-project-template) - Template Management
       - [`pjr project template deploy`](#pjr-project-template-deploy) - Template Deployment
       - [`pjr project template import`](#pjr-project-template-import) - Project Template Import
@@ -55,13 +55,13 @@ Options:
   -h, --help      display help for command
 
 Commands:
-  init [options]  Copy templates from playbook to local working directory
+  copy [options]  Copy templates from playbook to local working directory
   list [options]  List available templates.
 ```
-## `pjr playbook template init`
+## `pjr playbook template copy`
 
 ```
-Usage: pjr playbook template init [options]
+Usage: pjr playbook template copy [options]
 
 Copy templates from playbook to local working directory
 
@@ -112,14 +112,14 @@ Options:
   -h, --help        display help for command
 
 Commands:
-  create [options]  Create Sprints with Agile Provider
+  create [options]  Create Sprints in a Project
 ```
 ## `pjr project sprints create`
 
 ```
 Usage: pjr project sprints create [options]
 
-Create Sprints with Agile Provider
+Create Sprints in a Project
 
 Options:
   -a, --agile-provider <agileProvider>  Agile Provider

@@ -1,9 +1,8 @@
-import { BacklogItemTemplate } from "../../models";
+import { Template } from "../../models";
 import { hierarchicalBacklogItem, userStory } from "./items";
 
-export const exampleBacklogItemTemplate: BacklogItemTemplate = {
+export const exampleTemplate: Template = {
   name: "example",
   description: "",
-  path: "/",
   items: [userStory, hierarchicalBacklogItem],
 };

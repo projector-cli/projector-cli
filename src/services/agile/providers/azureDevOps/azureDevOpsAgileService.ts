@@ -11,9 +11,10 @@ import {
 import { WorkApi } from "azure-devops-node-api/WorkApi";
 import { WorkItemTrackingApi } from "azure-devops-node-api/WorkItemTrackingApi";
 import { ConfigKey, NumberConstants } from "../../../../constants";
-import { AgileProviderOptions, BacklogItem, InputService, Logger, Project, Sprint } from "../../../../models";
+import { AgileProviderOptions, BacklogItem, Logger, Project, Sprint } from "../../../../models";
 import { AzureDevOpsUtils, Config, retryAsync } from "../../../../utils";
 import { BaseAgileService } from "../../baseAgileService";
+import { InputService } from "../../../input";
 import { AzureDevOpsFieldName } from "./azureDevOpsFieldName";
 import { AzureDevOpsWorkItemType } from "./azureDevOpsWorkItemType";
 

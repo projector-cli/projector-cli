@@ -1,7 +1,7 @@
 export * from "./example";
 export * from "./empty";
 export * from "./items";
-import { emptyBacklogItemTemplate } from "./empty";
-import { exampleBacklogItemTemplate } from "./example";
+import { emptyTemplate } from "./empty";
+import { exampleTemplate } from "./example";
 
-export const sampleWorkItemTemplates = [emptyBacklogItemTemplate, exampleBacklogItemTemplate];
+export const sampleTemplates = [emptyTemplate, exampleTemplate];
