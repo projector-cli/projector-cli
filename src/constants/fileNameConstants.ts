@@ -1,4 +1,5 @@
-import { Filetype } from "../models/general/filetype";
+import path from "path";
+import { Filetype } from "../models";
 
 export class FileConstants {
   public static readonly defaultConfigurationExtension = ".yml";
@@ -8,4 +9,5 @@ export class FileConstants {
   public static readonly importDirectory = "imports";
   public static readonly parametersFileName = "parameters.json";
   public static readonly templatesFileName = "templates.json";
+  public static readonly templatesPath = path.join(".projector", "backlogItemTemplates");
 }
