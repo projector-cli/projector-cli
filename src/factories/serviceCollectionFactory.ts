@@ -1,5 +1,18 @@
-import { AgileProviderOptions, Template, Parameters, PlaybookOptions, ServiceCollection } from "../models";
-import { FileStorageService, InquirerInputService, LoggerProvider, MetricsProvider } from "../services";
+import {
+  AgileProviderOptions,
+  Template,
+  Parameters,
+  PlaybookOptions,
+  ServiceCollection,
+  Configuration,
+} from "../models";
+import {
+  FileStorageService,
+  InquirerInputService,
+  LoggerProvider,
+  MetricsProvider,
+  StoredConfigurationService,
+} from "../services";
 import { AgileServiceFactory } from "./agileServiceFactory";
 import { LoggerFactory } from "./loggerFactory";
 import { MetricsFactory } from "./metricsFactory";
@@ -19,6 +32,8 @@ export class ServiceCollectionFactory {
     const parameterService = new FileStorageService<Parameters>(process.cwd(), logger);
     const templateService = new FileStorageService<Template>(process.cwd(), logger);
     const configService = new FileStorageService<string>(process.cwd(), logger);
+    const configurationStorageService = new FileStorageService<Configuration>(process.cwd(), logger);
+    const configurationService = new StoredConfigurationService(configurationStorageService, logger);
     const inputService = new InquirerInputService(logger);
 
     return {
@@ -26,6 +41,7 @@ export class ServiceCollectionFactory {
       getPlaybookService: (options: PlaybookOptions) => PlaybookServiceFactory.get(options),
       templateService,
       parameterService,
+      configurationService,
       configService,
       logger,
       inputService,

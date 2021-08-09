@@ -1,5 +1,22 @@
-import { Template, Logger, Repo, RepoItem, RepoService, Parameters, ServiceCollection, Metrics } from "../../models";
-import { AgileService, InputService, PlaybookService, StorageService } from "../../services";
+import {
+  Template,
+  Logger,
+  Repo,
+  RepoItem,
+  RepoService,
+  Parameters,
+  ServiceCollection,
+  Metrics,
+  Configuration,
+} from "../../models";
+import {
+  AgileService,
+  ConfigurationService,
+  InputService,
+  PlaybookService,
+  StorageService,
+  StoredConfigurationService,
+} from "../../services";
 import { ModelSimulator } from "./modelSimulator";
 import { MockAgileServiceFunctions, SimulatorAgileService } from "./simulatorAgileService";
 
@@ -16,6 +33,7 @@ interface OptionalServiceCollection {
   playbookService?: PlaybookService;
   templateService?: StorageService<Template>;
   parameterService?: StorageService<Parameters>;
+  configurationService?: ConfigurationService;
   configService?: StorageService<string>;
   logger?: Logger;
   metrics?: Metrics;
@@ -36,6 +54,7 @@ export class ServiceSimulator {
       playbookService: existingPlaybookService,
       templateService: existingTemplateService,
       parameterService: existingParameterService,
+      configurationService: existingConfigurationService,
       configService: existingConfigService,
       logger: existingLogger,
       metrics: existingMetrics,
@@ -48,10 +67,14 @@ export class ServiceSimulator {
       ServiceSimulator.createTestAgileService({}, inputService, logger))!;
     const repoService: RepoService = (existingRepoService || ServiceSimulator.createTestRepoService())!;
     const playbookService: PlaybookService = (existingPlaybookService || ServiceSimulator.createTestPlaybookService())!;
+    const configurationService =
+      existingConfigurationService ||
+      new StoredConfigurationService(ServiceSimulator.createTestStorageService<Configuration>(), logger);
 
     const serviceCollection: ServiceCollection = {
       parameterService: (existingParameterService || ServiceSimulator.createTestStorageService<Parameters>())!,
       templateService: (existingTemplateService || ServiceSimulator.createTestStorageService<Template>())!,
+      configurationService,
       configService: (existingConfigService || ServiceSimulator.createTestStorageService<string>())!,
       logger,
       metrics,
@@ -138,6 +161,24 @@ export class ServiceSimulator {
       askQuestion: jest.fn(() => Promise.resolve(mockAnswers?.answer || "")),
       confirmAction: jest.fn(() => Promise.resolve(confirmAnswer ?? true)),
       multiChoiceQuestion: jest.fn(() => Promise.resolve(mockAnswers?.multiChoiceAnswer || "")),
+    };
+  }
+
+  public static createTestConfigurationService(): ConfigurationService {
+    return {
+      getPlaybooks: jest.fn(),
+      addPlaybook: jest.fn(),
+      updatePlaybook: jest.fn(),
+      removePlaybook: jest.fn(),
+      selectPlaybook: jest.fn(),
+      deselectPlaybook: jest.fn(),
+
+      getProjects: jest.fn(),
+      addProject: jest.fn(),
+      updateProject: jest.fn(),
+      removeProject: jest.fn(),
+      selectProject: jest.fn(),
+      deselectProject: jest.fn(),
     };
   }
 }
