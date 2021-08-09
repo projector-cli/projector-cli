@@ -8,6 +8,8 @@
     - [`pjr playbook template`](#pjr-playbook-template) - Discover and use templates from the code-with engineering playbook
       - [`pjr playbook template copy`](#pjr-playbook-template-copy) - Copy templates from playbook to local working directory
       - [`pjr playbook template list`](#pjr-playbook-template-list) - List available templates.
+    - [`pjr playbook select`](#pjr-playbook-select) - Select a playbook.
+    - [`pjr playbook deselect`](#pjr-playbook-deselect) - Deselect a playbook.
   - [`pjr project`](#pjr-project) - Interacting with a target project
     - [`pjr project sprints`](#pjr-project-sprints) - Sprint Management
       - [`pjr project sprints create`](#pjr-project-sprints-create) - Create Sprints in a Project
@@ -39,10 +41,13 @@ Usage: pjr playbook [options] [command]
 Interacting with the Code-With-Engineering Playbook
 
 Options:
-  -h, --help  display help for command
+  -h, --help          display help for command
 
 Commands:
-  template    Discover and use templates from the code-with engineering playbook
+  template            Discover and use templates from the code-with engineering
+                      playbook
+  select [options]    Select a playbook.
+  deselect [options]  Deselect a playbook.
 ```
 ## `pjr playbook template`
 
@@ -86,6 +91,35 @@ Options:
                                                      Can be provided via environment variable PLAYBOOK_ACCESS_TOKEN
                                                      Can be provided interactively by user if not available
   -h, --help                                         display help for command
+```
+## `pjr playbook select`
+
+```
+Usage: pjr playbook select [options]
+
+Select a playbook.
+
+Options:
+  -p, --playbook <playbook>    The name of the playbook to select.
+                               Can be provided interactively by user if not available
+  -e, --exclusive <exclusive>  If true, deselects other playbooks before selecting
+                               this one.
+                               Can be provided interactively by user if not available
+  -h, --help                   display help for command
+```
+## `pjr playbook deselect`
+
+```
+Usage: pjr playbook deselect [options]
+
+Deselect a playbook.
+
+Options:
+  -p, --playbook <playbook>  The name of the playbook to deselect.
+                             Can be provided interactively by user if not available
+  -a, --all <all>            If true, deselects all playbooks.
+                             Can be provided interactively by user if not available
+  -h, --help                 display help for command
 ```
 ## `pjr project`
 
