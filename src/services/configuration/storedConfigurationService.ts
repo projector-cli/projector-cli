@@ -41,15 +41,15 @@ export class StoredConfigurationService implements ConfigurationService {
    */
   public async addPlaybook(options: PlaybookConfiguration): Promise<void> {
     const configuration = await this.getOrCreateConfiguration();
-    const matches = configuration.playbooks.filter((playbook) => playbook.name === options.name);
+    const matches = configuration.playbooks.filter((playbook) => playbook.playbookName === options.playbookName);
     if (matches.length === 1) {
       this.logger.warn(
-        `Tried to add new playbook ${options}\nBut playbook ${matches[0].name} already exists: ${matches[0]}`,
+        `Tried to add new playbook ${options}\nBut playbook ${matches[0].playbookName} already exists: ${matches[0]}`,
       );
     } else if (matches.length > 1) {
       this.logger.warn(
         `Something's wrong with your config file:\nTried to add new playbook ${options}\nBut playbooks ${matches
-          .map((match) => match.name)
+          .map((match) => match.playbookName)
           .join()} already exist: ${matches}`,
       );
     } else {
@@ -74,7 +74,7 @@ export class StoredConfigurationService implements ConfigurationService {
     const matches: PlaybookConfiguration[] = [];
     const others: PlaybookConfiguration[] = [];
     configuration.playbooks.forEach((playbook) =>
-      playbook.name === name ? matches.push(playbook) : others.push(playbook),
+      playbook.playbookName === name ? matches.push(playbook) : others.push(playbook),
     );
 
     if (matches.length !== 0) {
@@ -87,55 +87,55 @@ export class StoredConfigurationService implements ConfigurationService {
   /**
    * Selects a playbook to target with future commands.
    *
-   * @param {string} name The playbook to select.
+   * @param {string} playbookName The playbook to select.
    */
-  public async selectPlaybook(name: string): Promise<void> {
+  public async selectPlaybook(playbookName: string): Promise<void> {
     const configuration = await this.getOrCreateConfiguration();
-    const playbook = configuration.playbooks.find((playbook) => playbook.name === name);
+    const playbook = configuration.playbooks.find((playbook) => playbook.playbookName === playbookName);
     if (!playbook) {
-      this.logger.warn(`Couldn't find playbook ${name}.`);
+      this.logger.warn(`Couldn't find playbook ${playbookName}.`);
       return;
     }
     if (playbook.isActive) {
-      this.logger.log(`Playbook ${name} is already active.`);
+      this.logger.log(`Playbook ${playbookName} is already active.`);
       return;
     }
 
-    await this.updatePlaybook({ name, isActive: true });
+    await this.updatePlaybook({ playbookName, isActive: true });
   }
 
   /**
    * Deselects a playbook to target with future commands.
    *
-   * @param {string} name The playbook to deselect.
+   * @param {string} playbookName The playbook to deselect.
    */
-  public async deselectPlaybook(name: string): Promise<void> {
+  public async deselectPlaybook(playbookName: string): Promise<void> {
     const configuration = await this.getOrCreateConfiguration();
-    const playbook = configuration.playbooks.find((playbook) => playbook.name === name);
+    const playbook = configuration.playbooks.find((playbook) => playbook.playbookName === playbookName);
     if (!playbook) {
-      this.logger.warn(`Couldn't find playbook ${name}.`);
+      this.logger.warn(`Couldn't find playbook ${playbookName}.`);
       return;
     }
     if (!playbook.isActive) {
-      this.logger.log(`Playbook ${name} is already inactive.`);
+      this.logger.log(`Playbook ${playbookName} is already inactive.`);
       return;
     }
 
-    await this.updatePlaybook({ name, isActive: false });
+    await this.updatePlaybook({ playbookName, isActive: false });
   }
 
   /**
    * Updates the properties on a playbook.
    *
-   * @param {OnlyRequire<PlaybookConfiguration, "name">} options The options to update the playbook with.
+   * @param {OnlyRequire<PlaybookConfiguration, "playbookName">} options The options to update the playbook with.
    * Besides name, all arguments are optional.
    */
-  public async updatePlaybook(options: OnlyRequire<PlaybookConfiguration, "name">): Promise<void> {
+  public async updatePlaybook(options: OnlyRequire<PlaybookConfiguration, "playbookName">): Promise<void> {
     const configuration = await this.getOrCreateConfiguration();
     const matches: PlaybookConfiguration[] = [];
     const others: PlaybookConfiguration[] = [];
     configuration.playbooks.forEach((playbook) =>
-      playbook.name === options.name ? matches.push(playbook) : others.push(playbook),
+      playbook.playbookName === options.playbookName ? matches.push(playbook) : others.push(playbook),
     );
 
     if (matches.length === 1) {
@@ -151,11 +151,11 @@ export class StoredConfigurationService implements ConfigurationService {
     } else if (matches.length > 1) {
       this.logger.warn(
         `Something's wrong with your config file:\nTried to update playbook ${options}\nBut multiple playbooks ${matches
-          .map((match) => match.name)
+          .map((match) => match.playbookName)
           .join()} found: ${matches}`,
       );
     } else {
-      this.logger.warn(`No playbook named ${options.name} found.`);
+      this.logger.warn(`No playbook named ${options.playbookName} found.`);
     }
   }
 
@@ -185,15 +185,15 @@ export class StoredConfigurationService implements ConfigurationService {
    */
   public async addProject(options: ProjectConfiguration): Promise<void> {
     const configuration = await this.getOrCreateConfiguration();
-    const matches = configuration.projects.filter((project) => project.name === options.name);
+    const matches = configuration.projects.filter((project) => project.projectName === options.projectName);
     if (matches.length === 1) {
       this.logger.warn(
-        `Tried to add new project ${options}\nBut project ${matches[0].name} already exists: ${matches[0]}`,
+        `Tried to add new project ${options}\nBut project ${matches[0].projectName} already exists: ${matches[0]}`,
       );
     } else if (matches.length > 1) {
       this.logger.warn(
         `Something's wrong with your config file:\nTried to add new project ${options}\nBut projects ${matches
-          .map((match) => match.name)
+          .map((match) => match.projectName)
           .join()} already exist: ${matches}`,
       );
     } else {
@@ -206,13 +206,15 @@ export class StoredConfigurationService implements ConfigurationService {
   /**
    * Removes a project from the configuration.
    *
-   * @param {string} name The name of the project to remove.
+   * @param {string} projectName The name of the project to remove.
    */
-  public async removeProject(name: string): Promise<void> {
+  public async removeProject(projectName: string): Promise<void> {
     const configuration = await this.getOrCreateConfiguration();
     const matches: ProjectConfiguration[] = [];
     const others: ProjectConfiguration[] = [];
-    configuration.projects.forEach((project) => (project.name === name ? matches.push(project) : others.push(project)));
+    configuration.projects.forEach((project) =>
+      project.projectName === projectName ? matches.push(project) : others.push(project),
+    );
 
     if (matches.length !== 0) {
       configuration.projects = others;
@@ -224,57 +226,57 @@ export class StoredConfigurationService implements ConfigurationService {
   /**
    * Selects a project to target with future commands.
    *
-   * @param {string} name The project to select.
+   * @param {string} projectName The project to select.
    */
-  public async selectProject(name: string): Promise<void> {
+  public async selectProject(projectName: string): Promise<void> {
     const configuration = await this.getOrCreateConfiguration();
-    const project = configuration.projects.find((project) => project.name === name);
+    const project = configuration.projects.find((project) => project.projectName === projectName);
     if (!project) {
-      this.logger.warn(`Couldn't find project ${name}.`);
+      this.logger.warn(`Couldn't find project ${projectName}.`);
       return;
     }
     if (project.isActive) {
-      this.logger.log(`Project ${name} is already active.`);
+      this.logger.log(`Project ${projectName} is already active.`);
       return;
     }
 
-    await this.updateProject({ name, isActive: true });
+    await this.updateProject({ projectName, isActive: true });
   }
 
   /**
    * Deselects a project to target with future commands.
    *
-   * @param {string} name The project to deselect.
+   * @param {string} projectName The project to deselect.
    */
-  public async deselectProject(name: string): Promise<void> {
+  public async deselectProject(projectName: string): Promise<void> {
     const configuration = await this.storageService.read(FileConstants.configFileName);
     if (configuration) {
-      const project = configuration.projects.find((project) => project.name === name);
+      const project = configuration.projects.find((project) => project.projectName === projectName);
       if (!project) {
-        this.logger.warn(`Couldn't find project ${name}.`);
+        this.logger.warn(`Couldn't find project ${projectName}.`);
         return;
       }
       if (!project.isActive) {
-        this.logger.log(`Project ${name} is already inactive.`);
+        this.logger.log(`Project ${projectName} is already inactive.`);
         return;
       }
 
-      await this.updateProject({ name, isActive: false });
+      await this.updateProject({ projectName, isActive: false });
     }
   }
 
   /**
    * Updates the properties on a project.
    *
-   * @param {OnlyRequire<ProjectConfiguration, "name">} options The options to update the project with.
+   * @param {OnlyRequire<ProjectConfiguration, "projectName">} options The options to update the project with.
    * Besides name, all arguments are optional.
    */
-  public async updateProject(options: OnlyRequire<ProjectConfiguration, "name">): Promise<void> {
+  public async updateProject(options: OnlyRequire<ProjectConfiguration, "projectName">): Promise<void> {
     const configuration = await this.getOrCreateConfiguration();
     const matches: ProjectConfiguration[] = [];
     const others: ProjectConfiguration[] = [];
     configuration.projects.forEach((project) =>
-      project.name === options.name ? matches.push(project) : others.push(project),
+      project.projectName === options.projectName ? matches.push(project) : others.push(project),
     );
 
     if (matches.length === 1) {
@@ -290,11 +292,11 @@ export class StoredConfigurationService implements ConfigurationService {
     } else if (matches.length > 1) {
       this.logger.warn(
         `Something's wrong with your config file:\nTried to update project ${options}\nBut multiple projects ${matches
-          .map((match) => match.name)
+          .map((match) => match.projectName)
           .join()} found: ${matches}`,
       );
     } else {
-      this.logger.warn(`No project named ${options.name} found.`);
+      this.logger.warn(`No project named ${options.projectName} found.`);
     }
   }
 
