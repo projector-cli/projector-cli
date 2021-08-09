@@ -1,41 +1,28 @@
-import { Configuration, Logger, ServiceCollection } from "../../../models";
-import { ConfigurationService, StorageService, StoredConfigurationService } from "../../../services";
+import { ServiceCollection } from "../../../models";
+import { ConfigurationService } from "../../../services";
 import { CliSimulator, ServiceSimulator } from "../../../test";
 import { playbookSelectCommandFactory } from "../select";
 
 describe("Playbook Select Command", () => {
-  let configuration: Configuration;
-  let storageService: StorageService<Configuration>;
-  let logger: Logger;
   let configurationService: ConfigurationService;
   let serviceCollection: ServiceCollection;
 
   beforeEach(() => {
-    configuration = {
-      playbooks: [
+    configurationService = ServiceSimulator.createTestConfigurationService();
+    configurationService.getPlaybooks = () => {
+      return Promise.resolve([
         {
-          name: "active",
+          playbookName: "active",
           location: "",
           isActive: true,
         },
         {
-          name: "inactive",
+          playbookName: "inactive",
           location: "",
           isActive: false,
         },
-      ],
-      projects: [],
-      appInsights: {
-        instrumentationKey: "",
-        enabled: true,
-      },
+      ]);
     };
-
-    storageService = ServiceSimulator.createTestStorageService<Configuration>(configuration);
-    logger = ServiceSimulator.createTestLogger();
-    configurationService = new StoredConfigurationService(storageService, logger);
-    configurationService.selectPlaybook = jest.fn();
-    configurationService.deselectPlaybook = jest.fn();
     serviceCollection = ServiceSimulator.createTestServiceCollection({ configurationService });
   });
 
