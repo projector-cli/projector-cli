@@ -9,24 +9,24 @@ describe("File Configuration Service", () => {
   const logger = ServiceSimulator.createTestLogger();
 
   const newPlaybook: PlaybookConfiguration = {
-    name: "new playbook",
+    playbookName: "new playbook",
     location: "/my/local/playbook",
     templatesPath: "/my/local/playbook/templates",
   };
 
   const existingPlaybook: PlaybookConfiguration = {
-    name: "existing playbook",
+    playbookName: "existing playbook",
     location: new URL("https://www.github.com/projector-cli/projector-cli"),
     token: "projector token",
   };
 
   const newProject: ProjectConfiguration = {
-    name: "new playbook",
+    projectName: "new playbook",
     url: new URL("https://dev.azure.com"),
   };
 
   const existingProject: ProjectConfiguration = {
-    name: "existing playbook",
+    projectName: "existing playbook",
     url: new URL("https://www.github.com/projector-cli/projector-cli"),
     token: "projector token",
   };
@@ -144,7 +144,7 @@ describe("File Configuration Service", () => {
     const configurationService = new StoredConfigurationService(storageService, logger);
 
     // Act
-    await configurationService.removePlaybook(newPlaybook.name);
+    await configurationService.removePlaybook(newPlaybook.playbookName);
 
     // Assert
     expect(storageService.write).not.toBeCalled();
@@ -156,7 +156,7 @@ describe("File Configuration Service", () => {
     const configurationService = new StoredConfigurationService(storageService, logger);
 
     // Act
-    await configurationService.removePlaybook(newPlaybook.name);
+    await configurationService.removePlaybook(newPlaybook.playbookName);
 
     // Assert
     expect(storageService.write).not.toBeCalled();
@@ -169,7 +169,7 @@ describe("File Configuration Service", () => {
     const configurationService = new StoredConfigurationService(storageService, logger);
 
     // Act
-    await configurationService.removePlaybook(newPlaybook.name);
+    await configurationService.removePlaybook(newPlaybook.playbookName);
 
     // Assert
     expect(storageService.write).not.toBeCalled();
@@ -182,7 +182,7 @@ describe("File Configuration Service", () => {
     const configurationService = new StoredConfigurationService(storageService, logger);
 
     // Act
-    await configurationService.removePlaybook(existingPlaybook.name);
+    await configurationService.removePlaybook(existingPlaybook.playbookName);
 
     // Assert
     expect(storageService.write).toBeCalled();
@@ -196,7 +196,7 @@ describe("File Configuration Service", () => {
     const configurationService = new StoredConfigurationService(storageService, logger);
 
     // Act
-    await configurationService.selectPlaybook(newPlaybook.name);
+    await configurationService.selectPlaybook(newPlaybook.playbookName);
 
     // Assert
     expect(storageService.write).not.toBeCalled();
@@ -208,7 +208,7 @@ describe("File Configuration Service", () => {
     const configurationService = new StoredConfigurationService(storageService, logger);
 
     // Act
-    await configurationService.selectPlaybook(newPlaybook.name);
+    await configurationService.selectPlaybook(newPlaybook.playbookName);
 
     // Assert
     expect(storageService.write).not.toBeCalled();
@@ -221,7 +221,7 @@ describe("File Configuration Service", () => {
     const configurationService = new StoredConfigurationService(storageService, logger);
 
     // Act
-    await configurationService.selectPlaybook(newPlaybook.name);
+    await configurationService.selectPlaybook(newPlaybook.playbookName);
 
     // Assert
     expect(storageService.write).not.toBeCalled();
@@ -234,7 +234,7 @@ describe("File Configuration Service", () => {
     const configurationService = new StoredConfigurationService(storageService, logger);
 
     // Act
-    await configurationService.selectPlaybook(existingPlaybook.name);
+    await configurationService.selectPlaybook(existingPlaybook.playbookName);
 
     // Assert
     expect(storageService.write).toBeCalled();
@@ -248,7 +248,7 @@ describe("File Configuration Service", () => {
     const configurationService = new StoredConfigurationService(storageService, logger);
 
     // Act
-    await configurationService.deselectPlaybook(newPlaybook.name);
+    await configurationService.deselectPlaybook(newPlaybook.playbookName);
 
     // Assert
     expect(storageService.write).not.toBeCalled();
@@ -260,7 +260,7 @@ describe("File Configuration Service", () => {
     const configurationService = new StoredConfigurationService(storageService, logger);
 
     // Act
-    await configurationService.deselectPlaybook(newPlaybook.name);
+    await configurationService.deselectPlaybook(newPlaybook.playbookName);
 
     // Assert
     expect(storageService.write).not.toBeCalled();
@@ -273,7 +273,7 @@ describe("File Configuration Service", () => {
     const configurationService = new StoredConfigurationService(storageService, logger);
 
     // Act
-    await configurationService.deselectPlaybook(newPlaybook.name);
+    await configurationService.deselectPlaybook(newPlaybook.playbookName);
 
     // Assert
     expect(storageService.write).not.toBeCalled();
@@ -286,7 +286,7 @@ describe("File Configuration Service", () => {
     const configurationService = new StoredConfigurationService(storageService, logger);
 
     // Act
-    await configurationService.deselectPlaybook(existingPlaybook.name);
+    await configurationService.deselectPlaybook(existingPlaybook.playbookName);
 
     // Assert
     expect(storageService.write).toBeCalled();
@@ -470,7 +470,7 @@ describe("File Configuration Service", () => {
     const configurationService = new StoredConfigurationService(storageService, logger);
 
     // Act
-    await configurationService.removeProject(newProject.name);
+    await configurationService.removeProject(newProject.projectName);
 
     // Assert
     expect(storageService.write).not.toBeCalled();
@@ -482,7 +482,7 @@ describe("File Configuration Service", () => {
     const configurationService = new StoredConfigurationService(storageService, logger);
 
     // Act
-    await configurationService.removeProject(newProject.name);
+    await configurationService.removeProject(newProject.projectName);
 
     // Assert
     expect(storageService.write).not.toBeCalled();
@@ -495,7 +495,7 @@ describe("File Configuration Service", () => {
     const configurationService = new StoredConfigurationService(storageService, logger);
 
     // Act
-    await configurationService.removeProject(newProject.name);
+    await configurationService.removeProject(newProject.projectName);
 
     // Assert
     expect(storageService.write).not.toBeCalled();
@@ -508,7 +508,7 @@ describe("File Configuration Service", () => {
     const configurationService = new StoredConfigurationService(storageService, logger);
 
     // Act
-    await configurationService.removeProject(existingProject.name);
+    await configurationService.removeProject(existingProject.projectName);
 
     // Assert
     expect(storageService.write).toBeCalled();
@@ -522,7 +522,7 @@ describe("File Configuration Service", () => {
     const configurationService = new StoredConfigurationService(storageService, logger);
 
     // Act
-    await configurationService.selectProject(newProject.name);
+    await configurationService.selectProject(newProject.projectName);
 
     // Assert
     expect(storageService.write).not.toBeCalled();
@@ -534,7 +534,7 @@ describe("File Configuration Service", () => {
     const configurationService = new StoredConfigurationService(storageService, logger);
 
     // Act
-    await configurationService.selectProject(newProject.name);
+    await configurationService.selectProject(newProject.projectName);
 
     // Assert
     expect(storageService.write).not.toBeCalled();
@@ -547,7 +547,7 @@ describe("File Configuration Service", () => {
     const configurationService = new StoredConfigurationService(storageService, logger);
 
     // Act
-    await configurationService.selectProject(newProject.name);
+    await configurationService.selectProject(newProject.projectName);
 
     // Assert
     expect(storageService.write).not.toBeCalled();
@@ -560,7 +560,7 @@ describe("File Configuration Service", () => {
     const configurationService = new StoredConfigurationService(storageService, logger);
 
     // Act
-    await configurationService.selectProject(existingProject.name);
+    await configurationService.selectProject(existingProject.projectName);
 
     // Assert
     expect(storageService.write).toBeCalled();
@@ -574,7 +574,7 @@ describe("File Configuration Service", () => {
     const configurationService = new StoredConfigurationService(storageService, logger);
 
     // Act
-    await configurationService.deselectProject(newProject.name);
+    await configurationService.deselectProject(newProject.projectName);
 
     // Assert
     expect(storageService.write).not.toBeCalled();
@@ -586,7 +586,7 @@ describe("File Configuration Service", () => {
     const configurationService = new StoredConfigurationService(storageService, logger);
 
     // Act
-    await configurationService.deselectProject(newProject.name);
+    await configurationService.deselectProject(newProject.projectName);
 
     // Assert
     expect(storageService.write).not.toBeCalled();
@@ -599,7 +599,7 @@ describe("File Configuration Service", () => {
     const configurationService = new StoredConfigurationService(storageService, logger);
 
     // Act
-    await configurationService.deselectProject(newProject.name);
+    await configurationService.deselectProject(newProject.projectName);
 
     // Assert
     expect(storageService.write).not.toBeCalled();
@@ -612,7 +612,7 @@ describe("File Configuration Service", () => {
     const configurationService = new StoredConfigurationService(storageService, logger);
 
     // Act
-    await configurationService.deselectProject(existingProject.name);
+    await configurationService.deselectProject(existingProject.projectName);
 
     // Assert
     expect(storageService.write).toBeCalled();
