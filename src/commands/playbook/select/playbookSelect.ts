@@ -17,7 +17,7 @@ export const playbookSelectCommandFactory = (): Command<PlaybookSelectOptions> =
       prompt: "Which playbook would you like to select?",
       choices: async (services: ServiceCollection) => {
         const { configurationService } = services;
-        return (await configurationService.getPlaybooks()).map((playbook) => playbook.name);
+        return (await configurationService.getPlaybooks()).map((playbook) => playbook.playbookName);
       },
     })
     .optionInteractive({
@@ -33,7 +33,7 @@ export const playbookSelectCommandFactory = (): Command<PlaybookSelectOptions> =
 
       if (exclusive) {
         const playbooks = await configurationService.getPlaybooks();
-        playbooks.forEach(async (playbook) => await configurationService.deselectPlaybook(playbook.name));
+        playbooks.forEach(async (playbook) => await configurationService.deselectPlaybook(playbook.playbookName));
       }
 
       configurationService.selectPlaybook(playbook);
