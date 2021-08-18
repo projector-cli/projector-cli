@@ -8,8 +8,10 @@
     - [`pjr playbook template`](#pjr-playbook-template) - Discover and use templates from the code-with engineering playbook
       - [`pjr playbook template copy`](#pjr-playbook-template-copy) - Copy templates from playbook to local working directory
       - [`pjr playbook template list`](#pjr-playbook-template-list) - List available templates.
-    - [`pjr playbook select`](#pjr-playbook-select) - Select a playbook.
+    - [`pjr playbook add`](#pjr-playbook-add) - Add a playbook.
     - [`pjr playbook deselect`](#pjr-playbook-deselect) - Deselect a playbook.
+    - [`pjr playbook remove`](#pjr-playbook-remove) - Remove a playbook.
+    - [`pjr playbook select`](#pjr-playbook-select) - Select a playbook.
   - [`pjr project`](#pjr-project) - Interacting with a target project
     - [`pjr project sprints`](#pjr-project-sprints) - Sprint Management
       - [`pjr project sprints create`](#pjr-project-sprints-create) - Create Sprints in a Project
@@ -44,10 +46,11 @@ Options:
   -h, --help          display help for command
 
 Commands:
-  template            Discover and use templates from the code-with engineering
-                      playbook
-  select [options]    Select a playbook.
+  template            Discover and use templates from the code-with engineering playbook
+  add [options]       Add a playbook.
   deselect [options]  Deselect a playbook.
+  remove [options]    Remove a playbook.
+  select [options]    Select a playbook.
 ```
 ## `pjr playbook template`
 
@@ -92,20 +95,25 @@ Options:
                                                      Can be provided interactively by user if not available
   -h, --help                                         display help for command
 ```
-## `pjr playbook select`
+## `pjr playbook add`
 
 ```
-Usage: pjr playbook select [options]
+Usage: pjr playbook add [options]
 
-Select a playbook.
+Add a playbook.
 
 Options:
-  -p, --playbook <playbook>    The name of the playbook to select.
-                               Can be provided interactively by user if not available
-  -e, --exclusive <exclusive>  If true, deselects other playbooks before selecting
-                               this one.
-                               Can be provided interactively by user if not available
-  -h, --help                   display help for command
+  -p, --playbook-name <playbookName>    The name of the playbook to add.
+                                        Can be provided interactively by user if not available
+  -l, --location <location>             The location of the playbook, either a URL or a local path.
+                                        Can be provided interactively by user if not available
+  -T, --token <token>                   A token with read permissions to the playbook.
+                                        Can be provided interactively by user if not available
+  -t, --templates-path <templatesPath>  The path where backlog item templates can be found.
+                                        Can be provided interactively by user if not available
+  -a, --is-active <isActive>            If true, activates this playbook immediately.
+                                        Can be provided interactively by user if not available
+  -h, --help                            display help for command
 ```
 ## `pjr playbook deselect`
 
@@ -120,6 +128,32 @@ Options:
   -a, --all <all>            If true, deselects all playbooks.
                              Can be provided interactively by user if not available
   -h, --help                 display help for command
+```
+## `pjr playbook remove`
+
+```
+Usage: pjr playbook remove [options]
+
+Remove a playbook.
+
+Options:
+  -p, --playbook <playbook>  The name of the playbook to remove.
+                             Can be provided interactively by user if not available
+  -h, --help                 display help for command
+```
+## `pjr playbook select`
+
+```
+Usage: pjr playbook select [options]
+
+Select a playbook.
+
+Options:
+  -p, --playbook <playbook>    The name of the playbook to select.
+                               Can be provided interactively by user if not available
+  -e, --exclusive <exclusive>  If true, deselects other playbooks before selecting this one.
+                               Can be provided interactively by user if not available
+  -h, --help                   display help for command
 ```
 ## `pjr project`
 
