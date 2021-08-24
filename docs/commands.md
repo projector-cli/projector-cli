@@ -10,8 +10,10 @@
       - [`pjr playbook template list`](#pjr-playbook-template-list) - List available templates.
     - [`pjr playbook add`](#pjr-playbook-add) - Add a playbook.
     - [`pjr playbook deselect`](#pjr-playbook-deselect) - Deselect a playbook.
+    - [`pjr playbook list`](#pjr-playbook-list) - See status.
     - [`pjr playbook remove`](#pjr-playbook-remove) - Remove a playbook.
     - [`pjr playbook select`](#pjr-playbook-select) - Select a playbook.
+    - [`pjr playbook status`](#pjr-playbook-status) - Check the status of playbooks.
   - [`pjr project`](#pjr-project) - Interacting with a target project
     - [`pjr project sprints`](#pjr-project-sprints) - Sprint Management
       - [`pjr project sprints create`](#pjr-project-sprints-create) - Create Sprints in a Project
@@ -49,8 +51,10 @@ Commands:
   template            Discover and use templates from the code-with engineering playbook
   add [options]       Add a playbook.
   deselect [options]  Deselect a playbook.
+  list [options]      See status.
   remove [options]    Remove a playbook.
   select [options]    Select a playbook.
+  status [options]    Check the status of playbooks.
 ```
 ## `pjr playbook template`
 
@@ -154,6 +158,21 @@ Options:
   -e, --exclusive <exclusive>  If true, deselects other playbooks before selecting this one.
                                Can be provided interactively by user if not available
   -h, --help                   display help for command
+```
+## `pjr playbook status`
+
+```
+Usage: pjr playbook status [options]
+
+Check the status of playbooks.
+
+Options:
+  -a --active         Status includes activity.
+  -l --location       Status includes location.
+  -p --templatesPath  Status includes templatesPath.
+  -t --token          Status includes whether the playbook has an associated token.
+  -v --verbose        Status includes everything.
+  -h, --help          display help for command
 ```
 ## `pjr project`
 
