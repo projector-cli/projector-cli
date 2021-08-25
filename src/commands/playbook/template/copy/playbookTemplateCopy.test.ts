@@ -33,7 +33,7 @@ describe("Playbook Template Copy Command", () => {
     const playbookTemplateCopy = playbookTemplateCopyCommandFactory();
 
     await playbookTemplateCopy.setServiceCollection(serviceCollection).parseAsync(
-      CliSimulator.createPlaybookArgs([
+      CliSimulator.createArgs([
         {
           name: "--template-name",
           value: templateName,

@@ -34,7 +34,6 @@ interface OptionalServiceCollection {
   templateService?: StorageService<Template>;
   parameterService?: StorageService<Parameters>;
   configurationService?: ConfigurationService;
-  configService?: StorageService<string>;
   logger?: Logger;
   metrics?: Metrics;
   inputService?: InputService;
@@ -55,7 +54,6 @@ export class ServiceSimulator {
       templateService: existingTemplateService,
       parameterService: existingParameterService,
       configurationService: existingConfigurationService,
-      configService: existingConfigService,
       logger: existingLogger,
       metrics: existingMetrics,
       inputService: existingInputService,
@@ -75,7 +73,6 @@ export class ServiceSimulator {
       parameterService: (existingParameterService || ServiceSimulator.createTestStorageService<Parameters>())!,
       templateService: (existingTemplateService || ServiceSimulator.createTestStorageService<Template>())!,
       configurationService,
-      configService: (existingConfigService || ServiceSimulator.createTestStorageService<string>())!,
       logger,
       metrics,
       inputService,

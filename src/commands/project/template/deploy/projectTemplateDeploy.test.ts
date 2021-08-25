@@ -77,7 +77,7 @@ describe("Project Template Deploy Command", () => {
       const projectTemplateDeploy = projectTemplateDeployCommandFactory();
 
       await projectTemplateDeploy.setServiceCollection(serviceCollection).parseAsync(
-        CliSimulator.createAgileArgs([
+        CliSimulator.createArgs([
           {
             name: "--file",
             value: backlogItemFileName,
@@ -142,7 +142,7 @@ describe("Project Template Deploy Command", () => {
       const projectTemplateDeploy = projectTemplateDeployCommandFactory();
 
       await projectTemplateDeploy.setServiceCollection(serviceCollection).parseAsync(
-        CliSimulator.createAgileArgs([
+        CliSimulator.createArgs([
           {
             name: "--file",
             value: "fakeFileName",

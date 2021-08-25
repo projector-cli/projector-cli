@@ -24,7 +24,7 @@ describe("Project Sprints Create Command", () => {
 
     const projectSprintsCreate = projectSprintsCreateCommandFactory();
 
-    await projectSprintsCreate.setServiceCollection(serviceCollection).parseAsync(CliSimulator.createAgileArgs());
+    await projectSprintsCreate.setServiceCollection(serviceCollection).parseAsync(CliSimulator.createArgs());
     expect(createSprints).toBeCalled();
   });
 });

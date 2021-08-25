@@ -1,7 +1,6 @@
 const envVarValue1 = "env var 1";
 process.env.TEST_CONFIG_ENV_VAR_1 = envVarValue1;
 
-import { ConfigKey, FileConstants } from "../constants";
 import { registerProviders } from "../initialization";
 import { CliSimulator, ServiceSimulator } from "../test";
 import { Command } from "./command";
@@ -205,25 +204,6 @@ describe("Command", () => {
       expect(actionFn).toBeCalledWith(userValue);
     });
 
-    it("gets value from configured environment variable", async () => {
-      const actionFn = jest.fn();
-      const command = new Command<{ myName: string }>()
-        .optionInteractive({
-          shortName: "-n",
-          longName: "--my-name",
-          configKey: "test.variable1" as ConfigKey,
-        })
-        .addAction((serviceCollection, options) => {
-          const { myName } = options;
-          actionFn(myName);
-        });
-
-      await command.parseAsync(CliSimulator.createArgs());
-      // Asserts that action was actually called
-      // Action contains the assertion
-      expect(actionFn).toBeCalledWith(envVarValue1);
-    });
-
     it("gets a value from the user", async () => {
       const userValue = "this is my name";
       const actionFn = jest.fn();
@@ -281,37 +261,6 @@ describe("Command", () => {
       expect(actionFn).toBeCalledWith(userValue);
     });
 
-    it("writes value to env file", async () => {
-      const actionFn = jest.fn();
-
-      const userValue = "optionA";
-      const inputService = ServiceSimulator.createTestInputService({
-        multiChoiceAnswer: userValue,
-        confirmAnswer: true,
-      });
-      const configService = ServiceSimulator.createTestStorageService<string>();
-
-      const serviceCollection = ServiceSimulator.createTestServiceCollection({ inputService, configService });
-
-      const command = new Command<{ myName: string }>()
-        .setServiceCollection(serviceCollection)
-        .optionInteractive({
-          shortName: "-n",
-          longName: "--my-name",
-          choices: ["optionA", "optionB", "optionC"],
-          configKey: "test.variable2" as ConfigKey,
-        })
-        .addAction((services, options) => {
-          const { myName } = options;
-          actionFn(myName);
-        });
-
-      await command.parseAsync(CliSimulator.createArgs());
-      expect(configService.write).toBeCalledWith(FileConstants.envFileName, `TEST_CONFIG_ENV_VAR_2=${userValue}`);
-      // Asserts that action was actually called
-      // Action contains the assertion
-      expect(actionFn).toBeCalledWith(userValue);
-    });
     it("uses dynamic choice initialization", async () => {
       const userValue = "optionA";
       const actionFn = jest.fn();

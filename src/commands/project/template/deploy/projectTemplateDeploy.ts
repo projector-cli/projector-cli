@@ -27,7 +27,6 @@ export const projectTemplateDeployCommandFactory = (): Command => {
         ];
       },
     })
-    .addAgileProviderOptions()
     .addAction(async (serviceCollection: ServiceCollection, options: AgileInitializationOptions) => {
       const { logger, getAgileService, templateService, inputService } = serviceCollection;
       const agileService = getAgileService(options);

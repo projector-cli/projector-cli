@@ -11,7 +11,6 @@ export interface ServiceCollection {
   templateService: StorageService<Template>;
   parameterService: StorageService<Parameters>;
   configurationService: ConfigurationService;
-  configService: StorageService<string>;
   inputService: InputService;
   logger: Logger;
   metrics?: Metrics;

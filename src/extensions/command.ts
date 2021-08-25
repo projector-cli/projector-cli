@@ -2,7 +2,7 @@
 import chalk from "chalk";
 import { Command as CommanderCommand } from "commander";
 import figlet from "figlet";
-import { FileConstants, MetricNames } from "../constants";
+import { MetricNames } from "../constants";
 import { ServiceCollectionFactory } from "../factories";
 import {
   ActionHandler,
@@ -12,17 +12,6 @@ import {
   RepoProviderOptions,
   ServiceCollection,
 } from "../models";
-import {
-  agileAccessTokenInteractiveOption,
-  agileBaseUrlInteractiveOption,
-  agileProjectNameInteractiveOption,
-  agileProviderInteractiveOption,
-  playbookOptionalAccessTokenInteractiveOption,
-  repoAccessTokenInteractiveOption,
-  repoBaseUrlInteractiveOption,
-  repoProjectNameInteractiveOption,
-  repoProviderInteractiveOption,
-} from "../options";
 import { AgileServiceProvider, RepoServiceProvider } from "../services";
 import { Config } from "../utils";
 
@@ -52,7 +41,6 @@ export class Command<TOptions = any> extends CommanderCommand {
       longName,
       description,
       defaultValue,
-      configKey,
       agileServiceProviders,
       repoServiceProviders,
       prompt,
@@ -73,15 +61,6 @@ export class Command<TOptions = any> extends CommanderCommand {
       if (currentValue !== undefined) {
         (this.commandOptions as any)[variableName] = currentValue;
         return;
-      }
-
-      if (configKey) {
-        // Try to get value from configuration - return if exists
-        const configuredVal = Config.getValueWithDefault(configKey);
-        if (configuredVal) {
-          (this.commandOptions as any)[variableName] = configuredVal;
-          return;
-        }
       }
 
       const agileServiceProvider = this.getAgileProvider();
@@ -111,17 +90,6 @@ export class Command<TOptions = any> extends CommanderCommand {
       }
 
       (this.commandOptions as any)[variableName] = answeredVal;
-
-      // Ask user if they'd like to save to .env if configKey exists to save it
-      if (configKey && (await inputService.confirmAction("Would you like to save to your local environment file?"))) {
-        const { configService, logger } = serviceCollection;
-        logger.log("TODO: Change.");
-
-        const currentEnvFile = await configService.read(FileConstants.envFileName);
-        const updatedEnvFile = Config.getUpdatedEnvFileContents(configKey, answeredVal, currentEnvFile);
-        await configService.write(FileConstants.envFileName, updatedEnvFile);
-        logger.log(`Saved to ${FileConstants.envFileName}`);
-      }
     });
   }
 
@@ -223,24 +191,6 @@ export class Command<TOptions = any> extends CommanderCommand {
     };
 
     return longNameSplit.map((value, index) => (index > 0 ? capitalizeFirstLetter(value) : value)).join("");
-  }
-
-  public addAgileProviderOptions(): Command<TOptions> {
-    return this.optionInteractive(agileProviderInteractiveOption)
-      .optionInteractive(agileBaseUrlInteractiveOption)
-      .optionInteractive(agileAccessTokenInteractiveOption)
-      .optionInteractive(agileProjectNameInteractiveOption);
-  }
-
-  public addRepoProviderOptions(): Command<TOptions> {
-    return this.optionInteractive(repoProviderInteractiveOption)
-      .optionInteractive(repoBaseUrlInteractiveOption)
-      .optionInteractive(repoAccessTokenInteractiveOption)
-      .optionInteractive(repoProjectNameInteractiveOption);
-  }
-
-  public addPlaybookOptions(): Command<TOptions> {
-    return this.optionInteractive(playbookOptionalAccessTokenInteractiveOption);
   }
 
   public addAction(actionHandler: ActionHandler<TOptions>): Command<TOptions> {
