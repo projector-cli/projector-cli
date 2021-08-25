@@ -11,7 +11,6 @@ export const playbookTemplateCopyCommandFactory = (): Command => {
   return new Command<PlaybookTemplateCopyOptions>()
     .name("copy")
     .description("Copy templates from playbook to local working directory")
-    .addPlaybookOptions()
     .option("-b, --branch <branch>", "Branch of playbook repo to use")
     .option("-t, --template-name <template-name>", "Playbook template name")
     .option("-o, --out-path <out-path>", "Local path to which file will be written.")

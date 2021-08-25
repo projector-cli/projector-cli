@@ -27,7 +27,6 @@ export const projectTemplateImportCommandFactory = (): Command => {
       defaultValue: FileConstants.importDirectory,
       prompt: "Which directory would you like to save the imported file[s] to?",
     })
-    .addAgileProviderOptions()
     .addAction(async (serviceCollection: ServiceCollection, options: AgileImportOptions) => {
       const { logger, getAgileService, templateService } = serviceCollection;
 

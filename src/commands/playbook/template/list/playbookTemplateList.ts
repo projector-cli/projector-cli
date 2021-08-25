@@ -6,7 +6,6 @@ export const playbookTemplateListCommandFactory = (): Command => {
   return new Command<PlaybookTemplateCopyOptions>()
     .name("list")
     .description("List available templates.")
-    .addPlaybookOptions()
     .addAction(async (serviceCollection: ServiceCollection, options: PlaybookOptions) => {
       const { logger, getPlaybookService } = serviceCollection;
       const playbookService = getPlaybookService(options);

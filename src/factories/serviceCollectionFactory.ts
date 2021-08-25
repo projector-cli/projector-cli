@@ -31,7 +31,6 @@ export class ServiceCollectionFactory {
     const logger = LoggerFactory.get(LoggerProvider.Composite);
     const parameterService = new FileStorageService<Parameters>(process.cwd(), logger);
     const templateService = new FileStorageService<Template>(process.cwd(), logger);
-    const configService = new FileStorageService<string>(process.cwd(), logger);
     const configurationStorageService = new FileStorageService<Configuration>(process.cwd(), logger);
     const configurationService = new StoredConfigurationService(configurationStorageService, logger);
     const inputService = new InquirerInputService(logger);
@@ -42,7 +41,6 @@ export class ServiceCollectionFactory {
       templateService,
       parameterService,
       configurationService,
-      configService,
       logger,
       inputService,
       metrics: MetricsFactory.getIfRegistered(MetricsProvider.AppInsights),

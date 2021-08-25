@@ -5,7 +5,6 @@ export const projectSprintsCreateCommandFactory = (): Command => {
   return new Command<AgileProviderOptions>()
     .name("create")
     .description("Create Sprints in a Project")
-    .addAgileProviderOptions()
     .addAction(async (serviceCollection: ServiceCollection, options: AgileProviderOptions) => {
       const { getAgileService } = serviceCollection;
       const agileService = getAgileService(options);

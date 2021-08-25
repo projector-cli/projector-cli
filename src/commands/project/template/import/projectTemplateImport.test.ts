@@ -35,7 +35,7 @@ describe("Agile Work Import Command", () => {
     const projectTemplateImport = projectTemplateImportCommandFactory();
 
     await projectTemplateImport.setServiceCollection(serviceCollection).parseAsync(
-      CliSimulator.createAgileArgs([
+      CliSimulator.createArgs([
         {
           name: "--directory",
           value: "foo",

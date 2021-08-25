@@ -26,7 +26,7 @@ describe("Playbook Template List Command", () => {
 
     const playbookTemplateList = playbookTemplateListCommandFactory();
 
-    await playbookTemplateList.setServiceCollection(serviceCollection).parseAsync(CliSimulator.createPlaybookArgs());
+    await playbookTemplateList.setServiceCollection(serviceCollection).parseAsync();
     expect(playbookService.getTemplates).toBeCalled();
   });
 });
