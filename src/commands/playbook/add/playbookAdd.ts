@@ -17,13 +17,13 @@ export const playbookAddCommandFactory = (): Command<PlaybookConfiguration> => {
       longName: "--location",
       description: "The location of the playbook, either a URL or a local path.",
       prompt:
-        "Where can we find the playbook? Please provide the full URL or path of the directory containing your .project directory.",
+        "Where can we find the playbook? Please provide the full URL or path of the directory containing your .projector directory",
     })
     .optionInteractive({
       shortName: "-T",
       longName: "--token",
       description: "A token with read permissions to the playbook.",
-      prompt: "Please provide a personal access token for this playbook.",
+      prompt: "Please provide a personal access token for this playbook",
     })
     .optionInteractive({
       shortName: "-t",
@@ -36,7 +36,7 @@ export const playbookAddCommandFactory = (): Command<PlaybookConfiguration> => {
       shortName: "-a",
       longName: "--is-active",
       description: "If true, activates this playbook immediately.",
-      prompt: "Would you like to activate this playbook immediately?",
+      prompt: "Should this playbook be activated immediately? If true, yes, if false, no",
       defaultValue: "true",
     })
     .addAction(async (serviceCollection: ServiceCollection, options: PlaybookConfiguration) => {
