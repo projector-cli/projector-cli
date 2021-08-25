@@ -2,7 +2,7 @@ import { Command } from "../../../../extensions";
 import { Template, ServiceCollection, PlaybookOptions } from "../../../../models";
 import { PlaybookTemplateCopyOptions } from "../copy/playbookTemplateCopy";
 
-export const playbookTemplateListCommandFactory = (): Command => {
+export const playbookTemplateListCommandFactory = (): Command<PlaybookTemplateCopyOptions> => {
   return new Command<PlaybookTemplateCopyOptions>()
     .name("list")
     .description("List available templates.")

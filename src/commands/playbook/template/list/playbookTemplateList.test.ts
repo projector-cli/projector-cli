@@ -1,5 +1,5 @@
 import { RepoService, RepoItem, Template } from "../../../../models";
-import { ServiceSimulator, CliSimulator } from "../../../../test";
+import { CliSimulator, ServiceSimulator } from "../../../../test";
 import { playbookTemplateListCommandFactory } from "./playbookTemplateList";
 
 describe("Playbook Template List Command", () => {
@@ -26,7 +26,7 @@ describe("Playbook Template List Command", () => {
 
     const playbookTemplateList = playbookTemplateListCommandFactory();
 
-    await playbookTemplateList.setServiceCollection(serviceCollection).parseAsync();
+    await playbookTemplateList.setServiceCollection(serviceCollection).parseAsync(CliSimulator.createArgs());
     expect(playbookService.getTemplates).toBeCalled();
   });
 });
