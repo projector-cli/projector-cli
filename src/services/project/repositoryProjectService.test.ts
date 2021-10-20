@@ -4,11 +4,20 @@ import { ServiceSimulator } from "../../test";
 import { RepositoryProjectService } from "./repositoryProjectService";
 
 describe("Project Service", () => {
-  const templateName = "template";
-  const templateFileName = "templates.json";
+  const selectedTemplateName = "selected";
+  const selectedTemplateFileName = "selected.json";
 
-  const templateItem: Template = {
-    name: templateName,
+  const unselectedTemplateName = "unselected";
+  const unselectedTemplateFileName = "unselected.json";
+
+  const selectedTemplateItem: Template = {
+    name: selectedTemplateName,
+    description: "description",
+    items: [],
+  };
+
+  const unselectedTemplateItem: Template = {
+    name: unselectedTemplateName,
     description: "description",
     items: [],
   };
@@ -26,8 +35,12 @@ describe("Project Service", () => {
 
   beforeEach(() => {
     templateService = ServiceSimulator.createTestStorageService<Template>();
-    templateService.list = jest.fn(() => Promise.resolve([templateFileName]));
-    templateService.read = jest.fn(() => Promise.resolve(templateItem));
+    templateService.list = jest.fn(() => Promise.resolve([selectedTemplateFileName, unselectedTemplateFileName]));
+    templateService.read = jest.fn((template) =>
+      template === selectedTemplateName
+        ? Promise.resolve(selectedTemplateItem)
+        : Promise.resolve(unselectedTemplateItem),
+    );
 
     inputService = ServiceSimulator.createTestInputService();
     logger = ServiceSimulator.createTestLogger();
@@ -55,11 +68,11 @@ describe("Project Service", () => {
 
   it("deploys given templates", async () => {
     const projectService = new RepositoryProjectService(agileService, templateService, logger);
-    expect((await projectService.deployTemplates({ templates: [templateName] })).length).toBeTruthy();
+    expect((await projectService.deployTemplates({ templates: [selectedTemplateName] })).length).toBe(1);
   });
 
   it("deploys all templates", async () => {
     const projectService = new RepositoryProjectService(agileService, templateService, logger);
-    expect((await projectService.deployTemplates({ all: true })).length).toBeTruthy();
+    expect((await projectService.deployTemplates({ all: true })).length).toBe(2);
   });
 });
