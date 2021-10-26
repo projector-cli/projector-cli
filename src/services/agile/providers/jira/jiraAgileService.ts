@@ -1,7 +1,15 @@
+import { AgileService } from "../..";
 import { BacklogItem, Project, Sprint } from "../../../../models";
-import { BaseAgileService } from "../../baseAgileService";
 
-export class JiraAgileService extends BaseAgileService {
+export class JiraAgileService implements AgileService {
+  constructor() {
+    throw new Error("Not implemented");
+  }
+
+  createSprints = async (): Promise<Sprint[]> => {
+    throw new Error("Not implemented");
+  };
+
   createProject = async (): Promise<Project> => {
     throw new Error("Not implemented");
   };

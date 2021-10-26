@@ -31,7 +31,7 @@ export class StoredConfigurationService implements ConfigurationService {
    */
   public async getPlaybooks(): Promise<PlaybookConfiguration[]> {
     const configuration = await this.getOrCreateConfiguration();
-    return configuration.playbooks;
+    return configuration.playbooks ?? [];
   }
 
   /**
@@ -41,7 +41,7 @@ export class StoredConfigurationService implements ConfigurationService {
    */
   public async addPlaybook(options: PlaybookConfiguration): Promise<void> {
     const configuration = await this.getOrCreateConfiguration();
-    const matches = configuration.playbooks.filter((playbook) => playbook.playbookName === options.playbookName);
+    const matches = configuration.playbooks?.filter((playbook) => playbook.playbookName === options.playbookName) ?? [];
     if (matches.length === 1) {
       this.logger.warn(
         `Tried to add new playbook ${options}\nBut playbook ${matches[0].playbookName} already exists: ${matches[0]}`,
@@ -58,6 +58,9 @@ export class StoredConfigurationService implements ConfigurationService {
         ...options,
       };
 
+      if (!configuration.playbooks) {
+        configuration.playbooks = [];
+      }
       configuration.playbooks.push(playbook);
 
       await this.storageService.write(FileConstants.configFileName, configuration);
@@ -73,7 +76,7 @@ export class StoredConfigurationService implements ConfigurationService {
     const configuration = await this.getOrCreateConfiguration();
     const matches: PlaybookConfiguration[] = [];
     const others: PlaybookConfiguration[] = [];
-    configuration.playbooks.forEach((playbook) =>
+    configuration.playbooks?.forEach((playbook) =>
       playbook.playbookName === name ? matches.push(playbook) : others.push(playbook),
     );
 
@@ -91,7 +94,7 @@ export class StoredConfigurationService implements ConfigurationService {
    */
   public async selectPlaybook(playbookName: string): Promise<void> {
     const configuration = await this.getOrCreateConfiguration();
-    const playbook = configuration.playbooks.find((playbook) => playbook.playbookName === playbookName);
+    const playbook = configuration.playbooks?.find((playbook) => playbook.playbookName === playbookName);
     if (!playbook) {
       this.logger.warn(`Couldn't find playbook ${playbookName}.`);
       return;
@@ -111,7 +114,7 @@ export class StoredConfigurationService implements ConfigurationService {
    */
   public async deselectPlaybook(playbookName: string): Promise<void> {
     const configuration = await this.getOrCreateConfiguration();
-    const playbook = configuration.playbooks.find((playbook) => playbook.playbookName === playbookName);
+    const playbook = configuration.playbooks?.find((playbook) => playbook.playbookName === playbookName);
     if (!playbook) {
       this.logger.warn(`Couldn't find playbook ${playbookName}.`);
       return;
@@ -134,7 +137,7 @@ export class StoredConfigurationService implements ConfigurationService {
     const configuration = await this.getOrCreateConfiguration();
     const matches: PlaybookConfiguration[] = [];
     const others: PlaybookConfiguration[] = [];
-    configuration.playbooks.forEach((playbook) =>
+    configuration.playbooks?.forEach((playbook) =>
       playbook.playbookName === options.playbookName ? matches.push(playbook) : others.push(playbook),
     );
 
@@ -175,7 +178,7 @@ export class StoredConfigurationService implements ConfigurationService {
    */
   public async getProjects(): Promise<ProjectConfiguration[]> {
     const configuration = await this.getOrCreateConfiguration();
-    return configuration.projects;
+    return configuration.projects ?? [];
   }
 
   /**
@@ -185,7 +188,7 @@ export class StoredConfigurationService implements ConfigurationService {
    */
   public async addProject(options: ProjectConfiguration): Promise<void> {
     const configuration = await this.getOrCreateConfiguration();
-    const matches = configuration.projects.filter((project) => project.projectName === options.projectName);
+    const matches = configuration.projects?.filter((project) => project.projectName === options.projectName) || [];
     if (matches.length === 1) {
       this.logger.warn(
         `Tried to add new project ${options}\nBut project ${matches[0].projectName} already exists: ${matches[0]}`,
@@ -197,6 +200,9 @@ export class StoredConfigurationService implements ConfigurationService {
           .join()} already exist: ${matches}`,
       );
     } else {
+      if (!configuration.projects) {
+        configuration.projects = [];
+      }
       configuration.projects.push(options);
 
       await this.storageService.write(FileConstants.configFileName, configuration);
@@ -212,7 +218,7 @@ export class StoredConfigurationService implements ConfigurationService {
     const configuration = await this.getOrCreateConfiguration();
     const matches: ProjectConfiguration[] = [];
     const others: ProjectConfiguration[] = [];
-    configuration.projects.forEach((project) =>
+    configuration.projects?.forEach((project) =>
       project.projectName === projectName ? matches.push(project) : others.push(project),
     );
 
@@ -230,7 +236,7 @@ export class StoredConfigurationService implements ConfigurationService {
    */
   public async selectProject(projectName: string): Promise<void> {
     const configuration = await this.getOrCreateConfiguration();
-    const project = configuration.projects.find((project) => project.projectName === projectName);
+    const project = configuration.projects?.find((project) => project.projectName === projectName);
     if (!project) {
       this.logger.warn(`Couldn't find project ${projectName}.`);
       return;
@@ -251,7 +257,7 @@ export class StoredConfigurationService implements ConfigurationService {
   public async deselectProject(projectName: string): Promise<void> {
     const configuration = await this.storageService.read(FileConstants.configFileName);
     if (configuration) {
-      const project = configuration.projects.find((project) => project.projectName === projectName);
+      const project = configuration.projects?.find((project) => project.projectName === projectName);
       if (!project) {
         this.logger.warn(`Couldn't find project ${projectName}.`);
         return;
@@ -275,7 +281,7 @@ export class StoredConfigurationService implements ConfigurationService {
     const configuration = await this.getOrCreateConfiguration();
     const matches: ProjectConfiguration[] = [];
     const others: ProjectConfiguration[] = [];
-    configuration.projects.forEach((project) =>
+    configuration.projects?.forEach((project) =>
       project.projectName === options.projectName ? matches.push(project) : others.push(project),
     );
 
@@ -300,6 +306,42 @@ export class StoredConfigurationService implements ConfigurationService {
     }
   }
 
+  //#endregion
+
+  /**
+   * ==========================================================================
+   *                                 APP INSIGHTS
+   * ==========================================================================
+   */
+  //#region
+
+  /**
+   * Whether the application should log to application insights.
+   *
+   * @returns {boolean} True if AppInsights logging is enabled.
+   */
+  public async isAppInsightsEnabled(): Promise<boolean> {
+    const configuration = await this.getOrCreateConfiguration();
+    return configuration.appInsights?.enabled ?? false;
+  }
+
+  /**
+   * Set the application insights logging.
+   *
+   * @param {boolean} shouldLogToAppInsights Whether the application should log
+   * to application insights.
+   */
+  public async setAppInsightsLogging(shouldLogToAppInsights: boolean): Promise<void> {
+    const configuration = await this.getOrCreateConfiguration();
+    if (!configuration.appInsights) {
+      configuration.appInsights = {
+        instrumentationKey: "6e4b4afa-05f9-4a1f-a5f8-a95958b53f60",
+        enabled: true,
+      };
+    }
+    configuration.appInsights.enabled = shouldLogToAppInsights;
+    await this.storageService.write(FileConstants.configFileName, configuration);
+  }
   //#endregion
 
   /**

@@ -1,6 +1,6 @@
 export interface PlaybookConfiguration {
   isActive?: boolean;
-  location: URL | string;
+  location: string;
   playbookName: string;
   token?: string;
   templatesPath?: string;

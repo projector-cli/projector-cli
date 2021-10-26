@@ -14,4 +14,7 @@ export interface ConfigurationService {
   removeProject(projectName: string): void;
   selectProject(projectName: string): void;
   deselectProject(projectName: string): void;
+
+  isAppInsightsEnabled(): Promise<boolean>;
+  setAppInsightsLogging(shouldLogToAppInsights: boolean): void;
 }

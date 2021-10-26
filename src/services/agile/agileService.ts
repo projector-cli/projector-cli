@@ -46,10 +46,10 @@ export interface AgileService {
   /**
    * Create sprints with Agile provider
    *
-   * @param {Sprint[]} sprints Sprints to create If no sprints provided, uses sprint config
+   * @param {Sprint[]} sprints Sprints to create
    * @returns {Promise<Sprint[]>} Sprints
    */
-  createSprints: (sprints?: Sprint[]) => Promise<Sprint[]>;
+  createSprints: (sprints: Sprint[]) => Promise<Sprint[]>;
 
   /**
    * Delete a sprint

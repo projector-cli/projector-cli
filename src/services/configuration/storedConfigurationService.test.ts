@@ -16,18 +16,18 @@ describe("File Configuration Service", () => {
 
   const existingPlaybook: PlaybookConfiguration = {
     playbookName: "existing playbook",
-    location: new URL("https://www.github.com/projector-cli/projector-cli"),
+    location: "https://www.github.com/projector-cli/projector-cli",
     token: "projector token",
   };
 
   const newProject: ProjectConfiguration = {
     projectName: "new playbook",
-    url: new URL("https://dev.azure.com"),
+    url: "https://dev.azure.com",
   };
 
   const existingProject: ProjectConfiguration = {
     projectName: "existing playbook",
-    url: new URL("https://www.github.com/projector-cli/projector-cli"),
+    url: "https://www.github.com/projector-cli/projector-cli",
     token: "projector token",
   };
 
@@ -98,7 +98,7 @@ describe("File Configuration Service", () => {
 
   it("adds a playbook w/ existing configuration and existing playbooks", async () => {
     // Setup
-    configuration.playbooks.push(existingPlaybook);
+    configuration.playbooks?.push(existingPlaybook);
     storageService = ServiceSimulator.createTestStorageService<Configuration>(configuration);
     const configurationService = new StoredConfigurationService(storageService, logger);
 
@@ -111,7 +111,7 @@ describe("File Configuration Service", () => {
 
   it("does not add a playbook w/ existing configuration and a matching playbook", async () => {
     // Setup
-    configuration.playbooks.push(existingPlaybook);
+    configuration.playbooks?.push(existingPlaybook);
     storageService = ServiceSimulator.createTestStorageService<Configuration>(configuration);
     const configurationService = new StoredConfigurationService(storageService, logger);
 
@@ -124,8 +124,8 @@ describe("File Configuration Service", () => {
 
   it("does not add a playbook w/ existing configuration multiple matching playbooks", async () => {
     // Setup
-    configuration.playbooks.push(existingPlaybook);
-    configuration.playbooks.push(existingPlaybook);
+    configuration.playbooks?.push(existingPlaybook);
+    configuration.playbooks?.push(existingPlaybook);
     storageService = ServiceSimulator.createTestStorageService<Configuration>(configuration);
     const configurationService = new StoredConfigurationService(storageService, logger);
 
@@ -164,7 +164,7 @@ describe("File Configuration Service", () => {
 
   it("does not remove a playbook w/ existing configuration but no matching playbook", async () => {
     // Setup
-    configuration.playbooks.push(existingPlaybook);
+    configuration.playbooks?.push(existingPlaybook);
     storageService = ServiceSimulator.createTestStorageService<Configuration>(configuration);
     const configurationService = new StoredConfigurationService(storageService, logger);
 
@@ -177,7 +177,7 @@ describe("File Configuration Service", () => {
 
   it("removes a playbook w/ existing configuration and a matching playbook", async () => {
     // Setup
-    configuration.playbooks.push(existingPlaybook);
+    configuration.playbooks?.push(existingPlaybook);
     storageService = ServiceSimulator.createTestStorageService<Configuration>(configuration);
     const configurationService = new StoredConfigurationService(storageService, logger);
 
@@ -216,7 +216,7 @@ describe("File Configuration Service", () => {
 
   it("does not select a playbook w/ existing configuration but no matching playbook", async () => {
     // Setup
-    configuration.playbooks.push(existingPlaybook);
+    configuration.playbooks?.push(existingPlaybook);
     storageService = ServiceSimulator.createTestStorageService<Configuration>(configuration);
     const configurationService = new StoredConfigurationService(storageService, logger);
 
@@ -229,7 +229,7 @@ describe("File Configuration Service", () => {
 
   it("selects a playbook w/ existing configuration and a matching playbook", async () => {
     // Setup
-    configuration.playbooks.push({ ...existingPlaybook, isActive: false });
+    configuration.playbooks?.push({ ...existingPlaybook, isActive: false });
     storageService = ServiceSimulator.createTestStorageService<Configuration>(configuration);
     const configurationService = new StoredConfigurationService(storageService, logger);
 
@@ -268,7 +268,7 @@ describe("File Configuration Service", () => {
 
   it("does not deselect a playbook w/ existing configuration but no matching playbook", async () => {
     // Setup
-    configuration.playbooks.push(existingPlaybook);
+    configuration.playbooks?.push(existingPlaybook);
     storageService = ServiceSimulator.createTestStorageService<Configuration>(configuration);
     const configurationService = new StoredConfigurationService(storageService, logger);
 
@@ -281,7 +281,7 @@ describe("File Configuration Service", () => {
 
   it("deselects a playbook w/ existing configuration and a matching playbook", async () => {
     // Setup
-    configuration.playbooks.push({ ...existingPlaybook, isActive: true });
+    configuration.playbooks?.push({ ...existingPlaybook, isActive: true });
     storageService = ServiceSimulator.createTestStorageService<Configuration>(configuration);
     const configurationService = new StoredConfigurationService(storageService, logger);
 
@@ -320,7 +320,7 @@ describe("File Configuration Service", () => {
 
   it("does not update a playbook w/ existing configuration but no matching playbooks", async () => {
     // Setup
-    configuration.playbooks.push(existingPlaybook);
+    configuration.playbooks?.push(existingPlaybook);
     storageService = ServiceSimulator.createTestStorageService<Configuration>(configuration);
     const configurationService = new StoredConfigurationService(storageService, logger);
 
@@ -333,8 +333,8 @@ describe("File Configuration Service", () => {
 
   it("does not update a playbook w/ existing configuration multiple matching playbooks", async () => {
     // Setup
-    configuration.playbooks.push(existingPlaybook);
-    configuration.playbooks.push(existingPlaybook);
+    configuration.playbooks?.push(existingPlaybook);
+    configuration.playbooks?.push(existingPlaybook);
     storageService = ServiceSimulator.createTestStorageService<Configuration>(configuration);
     const configurationService = new StoredConfigurationService(storageService, logger);
 
@@ -347,10 +347,10 @@ describe("File Configuration Service", () => {
 
   it("updates a playbook w/ existing configuration and a matching playbook", async () => {
     // Setup
-    configuration.playbooks.push(existingPlaybook);
+    configuration.playbooks?.push(existingPlaybook);
     storageService = ServiceSimulator.createTestStorageService<Configuration>(configuration);
     const configurationService = new StoredConfigurationService(storageService, logger);
-    const updatedPlaybook = { ...existingPlaybook, location: new URL("https://www.example.com") };
+    const updatedPlaybook = { ...existingPlaybook, location: "https://www.example.com" };
 
     // Act
     await configurationService.updatePlaybook(updatedPlaybook);
@@ -424,7 +424,7 @@ describe("File Configuration Service", () => {
 
   it("adds a project w/ existing configuration and existing projects", async () => {
     // Setup
-    configuration.projects.push(existingProject);
+    configuration.projects?.push(existingProject);
     storageService = ServiceSimulator.createTestStorageService<Configuration>(configuration);
     const configurationService = new StoredConfigurationService(storageService, logger);
 
@@ -437,7 +437,7 @@ describe("File Configuration Service", () => {
 
   it("does not add a project w/ existing configuration and a matching project", async () => {
     // Setup
-    configuration.projects.push(existingProject);
+    configuration.projects?.push(existingProject);
     storageService = ServiceSimulator.createTestStorageService<Configuration>(configuration);
     const configurationService = new StoredConfigurationService(storageService, logger);
 
@@ -450,8 +450,8 @@ describe("File Configuration Service", () => {
 
   it("does not add a project w/ existing configuration multiple matching projects", async () => {
     // Setup
-    configuration.projects.push(existingProject);
-    configuration.projects.push(existingProject);
+    configuration.projects?.push(existingProject);
+    configuration.projects?.push(existingProject);
     storageService = ServiceSimulator.createTestStorageService<Configuration>(configuration);
     const configurationService = new StoredConfigurationService(storageService, logger);
 
@@ -490,7 +490,7 @@ describe("File Configuration Service", () => {
 
   it("does not remove a project w/ existing configuration but no matching project", async () => {
     // Setup
-    configuration.projects.push(existingProject);
+    configuration.projects?.push(existingProject);
     storageService = ServiceSimulator.createTestStorageService<Configuration>(configuration);
     const configurationService = new StoredConfigurationService(storageService, logger);
 
@@ -503,7 +503,7 @@ describe("File Configuration Service", () => {
 
   it("removes a project w/ existing configuration and a matching project", async () => {
     // Setup
-    configuration.projects.push(existingProject);
+    configuration.projects?.push(existingProject);
     storageService = ServiceSimulator.createTestStorageService<Configuration>(configuration);
     const configurationService = new StoredConfigurationService(storageService, logger);
 
@@ -542,7 +542,7 @@ describe("File Configuration Service", () => {
 
   it("does not select a project w/ existing configuration but no matching project", async () => {
     // Setup
-    configuration.projects.push(existingProject);
+    configuration.projects?.push(existingProject);
     storageService = ServiceSimulator.createTestStorageService<Configuration>(configuration);
     const configurationService = new StoredConfigurationService(storageService, logger);
 
@@ -555,7 +555,7 @@ describe("File Configuration Service", () => {
 
   it("selects a project w/ existing configuration and a matching project", async () => {
     // Setup
-    configuration.projects.push({ ...existingProject, isActive: false });
+    configuration.projects?.push({ ...existingProject, isActive: false });
     storageService = ServiceSimulator.createTestStorageService<Configuration>(configuration);
     const configurationService = new StoredConfigurationService(storageService, logger);
 
@@ -594,7 +594,7 @@ describe("File Configuration Service", () => {
 
   it("does not deselect a project w/ existing configuration but no matching project", async () => {
     // Setup
-    configuration.projects.push(existingProject);
+    configuration.projects?.push(existingProject);
     storageService = ServiceSimulator.createTestStorageService<Configuration>(configuration);
     const configurationService = new StoredConfigurationService(storageService, logger);
 
@@ -607,7 +607,7 @@ describe("File Configuration Service", () => {
 
   it("deselects a project w/ existing configuration and a matching project", async () => {
     // Setup
-    configuration.projects.push({ ...existingProject, isActive: true });
+    configuration.projects?.push({ ...existingProject, isActive: true });
     storageService = ServiceSimulator.createTestStorageService<Configuration>(configuration);
     const configurationService = new StoredConfigurationService(storageService, logger);
 
@@ -646,7 +646,7 @@ describe("File Configuration Service", () => {
 
   it("does not update a project w/ existing configuration but no matching projects", async () => {
     // Setup
-    configuration.projects.push(existingProject);
+    configuration.projects?.push(existingProject);
     storageService = ServiceSimulator.createTestStorageService<Configuration>(configuration);
     const configurationService = new StoredConfigurationService(storageService, logger);
 
@@ -659,8 +659,8 @@ describe("File Configuration Service", () => {
 
   it("does not update a project w/ existing configuration multiple matching projects", async () => {
     // Setup
-    configuration.projects.push(existingProject);
-    configuration.projects.push(existingProject);
+    configuration.projects?.push(existingProject);
+    configuration.projects?.push(existingProject);
     storageService = ServiceSimulator.createTestStorageService<Configuration>(configuration);
     const configurationService = new StoredConfigurationService(storageService, logger);
 
@@ -673,10 +673,10 @@ describe("File Configuration Service", () => {
 
   it("updates a project w/ existing configuration and a matching project", async () => {
     // Setup
-    configuration.projects.push(existingProject);
+    configuration.projects?.push(existingProject);
     storageService = ServiceSimulator.createTestStorageService<Configuration>(configuration);
     const configurationService = new StoredConfigurationService(storageService, logger);
-    const updatedProject = { ...existingProject, location: new URL("https://www.example.com") };
+    const updatedProject = { ...existingProject, location: "https://www.example.com" };
 
     // Act
     await configurationService.updateProject(updatedProject);

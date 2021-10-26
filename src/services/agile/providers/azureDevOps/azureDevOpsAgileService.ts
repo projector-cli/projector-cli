@@ -10,15 +10,14 @@ import {
 } from "azure-devops-node-api/interfaces/WorkItemTrackingInterfaces";
 import { WorkApi } from "azure-devops-node-api/WorkApi";
 import { WorkItemTrackingApi } from "azure-devops-node-api/WorkItemTrackingApi";
+import { AgileService } from "../..";
 import { ConfigKey, NumberConstants } from "../../../../constants";
 import { AgileProviderOptions, BacklogItem, Logger, Project, Sprint } from "../../../../models";
 import { AzureDevOpsUtils, Config, retryAsync } from "../../../../utils";
-import { BaseAgileService } from "../../baseAgileService";
-import { InputService } from "../../../input";
 import { AzureDevOpsFieldName } from "./azureDevOpsFieldName";
 import { AzureDevOpsWorkItemType } from "./azureDevOpsWorkItemType";
 
-export class AzureDevOpsAgileService extends BaseAgileService {
+export class AzureDevOpsAgileService implements AgileService {
   /* Name of Azure DevOps Project */
   private projectName: string;
   /* Work Item Tracking API */
@@ -29,9 +28,9 @@ export class AzureDevOpsAgileService extends BaseAgileService {
   private coreApi: CoreApi;
   /* Team Context */
   private teamContext?: TeamContext;
+  private logger: Logger;
 
-  constructor(options: AgileProviderOptions, inputService: InputService, logger: Logger) {
-    super(options, inputService, logger);
+  constructor(options: AgileProviderOptions, logger: Logger) {
     const { baseUrl, projectName, accessToken } = options;
 
     if (!projectName) {
@@ -47,6 +46,8 @@ export class AzureDevOpsAgileService extends BaseAgileService {
     this.coreApi = new CoreApi(baseUrl, [authHandler]);
     this.workItemTracking = new WorkItemTrackingApi(baseUrl, [authHandler]);
     this.workApi = new WorkApi(baseUrl, [authHandler]);
+
+    this.logger = logger;
   }
 
   // Projects
@@ -211,7 +212,7 @@ export class AzureDevOpsAgileService extends BaseAgileService {
     };
   };
 
-  createProviderSprints = async (sprints: Sprint[]): Promise<Sprint[]> => {
+  createSprints = async (sprints: Sprint[]): Promise<Sprint[]> => {
     const teamContext = await this.getTeamContext();
 
     this.logger.log(`Creating ${sprints.length} sprints`);

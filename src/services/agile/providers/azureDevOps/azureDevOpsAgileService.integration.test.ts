@@ -2,7 +2,6 @@ import { generate } from "randomstring";
 import * as coreInterfaces from "azure-devops-node-api/interfaces/CoreInterfaces";
 import { Guid } from "guid-typescript";
 import { ConfigKey, NumberConstants } from "../../../../constants";
-import { registerProviders } from "../../../../initialization/registerProviders";
 import { BacklogItem, BacklogItemType, Project, Sprint } from "../../../../models";
 import { ServiceSimulator } from "../../../../test";
 import { Config, retryAsync } from "../../../../utils";
@@ -10,7 +9,6 @@ import { AgileServiceProvider } from "../../agileServiceProvider";
 import { AzureDevOpsAgileService } from "./azureDevOpsAgileService";
 
 describe("Azure DevOps Agile Service", () => {
-  registerProviders();
   const inputService = ServiceSimulator.createTestInputService({
     confirmAnswer: true,
   });
@@ -23,7 +21,6 @@ describe("Azure DevOps Agile Service", () => {
       baseUrl: Config.getValue(ConfigKey.TestAzDOBaseUrl),
       projectName: Config.getValue(ConfigKey.TestAzDOProjectName),
     },
-    inputService,
     logger,
   );
 

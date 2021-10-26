@@ -1,4 +1,3 @@
-import { InputService } from "../../../input";
 import { ConfigKey } from "../../../../constants";
 import {
   AgileProviderOptions,
@@ -13,7 +12,7 @@ import {
 } from "../../../../models";
 import { Config } from "../../../../utils";
 import { GitHubRestService } from "../../../shared";
-import { BaseAgileService } from "../../baseAgileService";
+import { AgileService } from "../..";
 
 interface DbIdProp {
   db_id: number;
@@ -22,11 +21,11 @@ interface DbIdProp {
 /**
  * Performing agile-related business logic on GitHub platform
  */
-export class GitHubAgileService extends BaseAgileService {
+export class GitHubAgileService implements AgileService {
   private github: GitHubRestService;
+  private logger: Logger;
 
-  public constructor(options: AgileProviderOptions, inputService: InputService, logger: Logger) {
-    super(options, inputService, logger);
+  public constructor(options: AgileProviderOptions, logger: Logger) {
     this.github = new GitHubRestService(options);
     this.logger = logger;
   }
@@ -243,7 +242,7 @@ export class GitHubAgileService extends BaseAgileService {
     return this.mapMilestoneToSprint(milestone);
   };
 
-  createProviderSprints = (sprints: Sprint[]): Promise<Sprint[]> => {
+  createSprints = (sprints: Sprint[]): Promise<Sprint[]> => {
     return Promise.all(sprints.map((sprint: Sprint) => this.createSprint(sprint)));
   };
 

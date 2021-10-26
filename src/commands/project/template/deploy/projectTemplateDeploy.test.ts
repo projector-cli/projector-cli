@@ -1,11 +1,11 @@
 import { BacklogItem, Template } from "../../../../models";
 import { ModelSimulator, ServiceSimulator, CliSimulator } from "../../../../test";
 import { projectTemplateDeployCommandFactory } from ".";
-import { AgileService } from "../../../../services";
 
 describe("Project Template Deploy Command", () => {
   const backlogItemFileName = "myItems.json";
   const template = ModelSimulator.createTestTemplate();
+  const projectService = ServiceSimulator.createTestProjectService();
 
   describe("no arguments", () => {
     it("chooses from list of files in working directory", async () => {
@@ -13,33 +13,20 @@ describe("Project Template Deploy Command", () => {
       const options = [userChoice, "optionB.yml", "optionC.yaml"];
       const allFiles = [...options, "optionD.txt"];
 
-      const inputService = ServiceSimulator.createTestInputService({
-        multiChoiceAnswer: userChoice,
-      });
-      inputService.multiChoiceQuestion = jest.fn(async () => {
-        return "";
-      });
+      const activeProjectServiceFactoryMap = ServiceSimulator.createTestActiveProjectServiceFactoryMap();
+      activeProjectServiceFactoryMap.set("test", () => projectService);
 
-      const templateService = ServiceSimulator.createTestStorageService<Template>(
-        undefined,
-        undefined,
-        jest.fn(() => {
-          return allFiles;
-        }),
-      );
+      const templateService = ServiceSimulator.createTestStorageService<Template>();
+      templateService.list = jest.fn(() => Promise.resolve(allFiles));
+      templateService.read = jest.fn(() => Promise.resolve(template));
+
       const serviceCollection = ServiceSimulator.createTestServiceCollection({
+        activeProjectServiceFactoryMap,
         templateService,
-        inputService,
       });
       const projectTemplateDeploy = projectTemplateDeployCommandFactory();
 
       await projectTemplateDeploy.setServiceCollection(serviceCollection).parseAsync(CliSimulator.createArgs());
-      expect(inputService.multiChoiceQuestion).toHaveBeenCalled();
-
-      expect(inputService.multiChoiceQuestion).toHaveBeenCalledWith(
-        "What is the name of the file containing your backlog items?",
-        options.concat("other"),
-      );
     });
   });
 
@@ -47,31 +34,17 @@ describe("Project Template Deploy Command", () => {
     it("calls createBacklogItems in the agile service with file input", async () => {
       const inputService = ServiceSimulator.createTestInputService();
       const logger = ServiceSimulator.createTestLogger();
-      const createBacklogItems = jest.fn((items: BacklogItem[]) =>
-        Promise.resolve(
-          items.map((item) => {
-            return {
-              ...item,
-              id: "itemId",
-            };
-          }),
-        ),
-      );
-
-      const agileService: AgileService = ServiceSimulator.createTestAgileService(
-        {
-          createBacklogItems,
-        },
-        inputService,
-        logger,
-      );
 
       const templateService = ServiceSimulator.createTestStorageService<Template>(template);
 
+      const activeProjectServiceFactoryMap = ServiceSimulator.createTestActiveProjectServiceFactoryMap();
+      activeProjectServiceFactoryMap.set("test", () => projectService);
+
       const serviceCollection = ServiceSimulator.createTestServiceCollection({
-        templateService,
-        agileService,
+        activeProjectServiceFactoryMap,
+        inputService,
         logger,
+        templateService,
       });
 
       const projectTemplateDeploy = projectTemplateDeployCommandFactory();
@@ -79,38 +52,13 @@ describe("Project Template Deploy Command", () => {
       await projectTemplateDeploy.setServiceCollection(serviceCollection).parseAsync(
         CliSimulator.createArgs([
           {
-            name: "--file",
-            value: backlogItemFileName,
+            name: "--templates",
+            value: [backlogItemFileName],
           },
         ]),
       );
 
-      expect(createBacklogItems).toBeCalledWith(template.items);
-
-      const getChildCount = (item: BacklogItem): number => {
-        const { children } = item;
-
-        let count = 0;
-
-        if (children) {
-          count += children.length;
-          for (const child of children) {
-            count += getChildCount(child);
-          }
-        }
-
-        return count;
-      };
-
-      let childCount = 0;
-
-      template.items.forEach((item: BacklogItem) => {
-        childCount += getChildCount(item);
-      });
-
-      // Log header and one line for each backlog item
-      expect(logger.log).toBeCalledTimes(template.items.length + childCount);
-      expect(logger.logHeader).toBeCalledTimes(1);
+      expect(projectService.deployTemplates).toBeCalledWith([template]);
     });
 
     it("throws if backlog item file does not exist", async () => {
@@ -127,16 +75,10 @@ describe("Project Template Deploy Command", () => {
 
       const inputService = ServiceSimulator.createTestInputService();
       const logger = ServiceSimulator.createTestLogger();
-      const agileService: AgileService = ServiceSimulator.createTestAgileService(
-        { createBacklogItems },
-        inputService,
-        logger,
-      );
 
       const serviceCollection = ServiceSimulator.createTestServiceCollection({
         inputService,
         logger,
-        agileService,
       });
 
       const projectTemplateDeploy = projectTemplateDeployCommandFactory();
@@ -144,7 +86,7 @@ describe("Project Template Deploy Command", () => {
       await projectTemplateDeploy.setServiceCollection(serviceCollection).parseAsync(
         CliSimulator.createArgs([
           {
-            name: "--file",
+            name: "--templates",
             value: "fakeFileName",
           },
         ]),

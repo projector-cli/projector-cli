@@ -11,6 +11,12 @@ export const playbookSelectCommandFactory = (): Command<PlaybookSelectOptions> =
     .name("select")
     .description("Select a playbook.")
     .optionInteractive({
+      shortName: "-e",
+      longName: "--exclusive",
+      description: "If true, deselects other playbooks before selecting this one.",
+      prompt: "Would you like to select this playbook exclusively?",
+    })
+    .optionInteractive({
       shortName: "-p",
       longName: "--playbook",
       description: "The name of the playbook to select.",
@@ -19,12 +25,6 @@ export const playbookSelectCommandFactory = (): Command<PlaybookSelectOptions> =
         const { configurationService } = services;
         return (await configurationService.getPlaybooks()).map((playbook) => playbook.playbookName);
       },
-    })
-    .optionInteractive({
-      shortName: "-e",
-      longName: "--exclusive",
-      description: "If true, deselects other playbooks before selecting this one.",
-      prompt: "Would you like to select this playbook exclusively?",
     })
     .addAction(async (serviceCollection: ServiceCollection, options: PlaybookSelectOptions) => {
       const { configurationService } = serviceCollection;

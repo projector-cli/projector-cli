@@ -1,7 +1,6 @@
 const envVarValue1 = "env var 1";
 process.env.TEST_CONFIG_ENV_VAR_1 = envVarValue1;
 
-import { registerProviders } from "../initialization";
 import { CliSimulator, ServiceSimulator } from "../test";
 import { Command } from "./command";
 
@@ -91,7 +90,6 @@ describe("Command", () => {
 
     // Act
     await new Command()
-      .initialize(() => registerProviders())
       .setServiceCollection(serviceCollection)
       .printHelp()
       .parseAsync(["node.exe", "index.js", "commandName"]);
@@ -110,7 +108,6 @@ describe("Command", () => {
 
     // Act
     await new Command()
-      .initialize(() => registerProviders())
       .setServiceCollection(serviceCollection)
       .asciiArt(originalText)
       .parseAsync(["node.exe", "index.js", "commandName"]);
@@ -187,6 +184,7 @@ describe("Command", () => {
           shortName: "-n",
           longName: "--my-name",
         })
+        .setServiceCollection(ServiceSimulator.createTestServiceCollection())
         .addAction((serviceCollection, options) => {
           const { myName } = options;
           actionFn(myName);

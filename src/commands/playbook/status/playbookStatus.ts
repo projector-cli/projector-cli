@@ -30,11 +30,7 @@ export const playbookStatusCommandFactory = (): Command<PlaybookStatusOptions> =
 
       playbooks.forEach((playbook) => {
         const playbookStatus = `  playbook: ${playbook.playbookName}`;
-        const playbookStatusWithLocation = playbookStatus.concat(
-          location || verbose
-            ? ` @ ${typeof playbook.location === "string" ? playbook.location : playbook.location.href}`
-            : "",
-        );
+        const playbookStatusWithLocation = playbookStatus.concat(location || verbose ? ` @ ${playbook.location}` : "");
         const playbookStatusWithActivity = playbookStatusWithLocation.concat(
           active || verbose ? ` is ${!!playbook.isActive ? "" : "not "}active` : "",
         );

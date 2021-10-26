@@ -39,7 +39,6 @@ export class Command<TOptions = any> extends CommanderCommand {
     const {
       shortName,
       longName,
-      description,
       defaultValue,
       agileServiceProviders,
       repoServiceProviders,
@@ -49,7 +48,7 @@ export class Command<TOptions = any> extends CommanderCommand {
 
     const variableName = this.getVariableName(longName);
 
-    const decoratedDescription = description + this.getDecoratedDescription(optionConfig);
+    const decoratedDescription = this.getDecoratedDescription(optionConfig);
 
     this.option(`${shortName}, ${longName} <${variableName}>`, decoratedDescription);
 
@@ -197,7 +196,7 @@ export class Command<TOptions = any> extends CommanderCommand {
     this.actions.push(actionHandler);
 
     this.action(async () => {
-      const serviceCollection = this.serviceCollection || ServiceCollectionFactory.create();
+      const serviceCollection = this.serviceCollection || (await ServiceCollectionFactory.create());
 
       this.commandOptions = {
         ...this.opts(),
