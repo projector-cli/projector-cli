@@ -1,5 +1,4 @@
-import { RepoItemType, Template } from "../../../../models";
-import { InputService, PlaybookService, RepositoryPlaybookService } from "../../../../services";
+import { Template } from "../../../../models";
 import { ServiceSimulator, CliSimulator } from "../../../../test";
 import { playbookTemplateCopyCommandFactory } from "./playbookTemplateCopy";
 
