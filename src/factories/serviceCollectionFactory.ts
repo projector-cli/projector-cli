@@ -1,27 +1,32 @@
+import { TelemetryClient } from "applicationinsights";
+import axios from "axios";
 import NodeClient from "applicationinsights/out/Library/NodeClient";
-import { Template, Parameters, ServiceCollection, Configuration, RepoService } from "../models";
+import { Template, Parameters, ServiceCollection, Configuration, PlaybookConfiguration, Downloadable } from "../models";
 import {
   AgileService,
   AgileServiceProvider,
+  ApplicationInsightsLogger,
+  ApplicationInsightsMetrics,
   AzureDevOpsAgileService,
-  AzureDevOpsRepoService,
   CompositeLogger,
   ConsoleLogger,
   FileStorageService,
   GitHubAgileService,
-  GitHubRepoService,
+  DownloadablePlaybookService,
   InquirerInputService,
   JiraAgileService,
-  MetricsProvider,
   PlaybookService,
   ProjectService,
-  RepoServiceProvider,
-  RepositoryPlaybookService,
   RepositoryProjectService,
   StoredConfigurationService,
+  TemplateFilterOptions,
 } from "../services";
-import { ApplicationInsightsLogger } from "../services/logger/applicationInsightsLogger";
-import { MetricsFactory } from "./metricsFactory";
+import { FileConstants } from "../constants";
+import { Octokit } from "@octokit/rest";
+import { GitVersionType } from "azure-devops-node-api/interfaces/GitInterfaces";
+import { VersionControlRecursionType } from "azure-devops-node-api/interfaces/TfvcInterfaces";
+import { GitApi } from "azure-devops-node-api/GitApi";
+import { getPersonalAccessTokenHandler } from "azure-devops-node-api";
 
 /**
  * Factory for collections of services
@@ -54,7 +59,6 @@ export class ServiceCollectionFactory {
 
     const playbooks = (await configurationService.getPlaybooks()).filter((playbook) => !!playbook.isActive);
     playbooks.forEach((playbook) => {
-      let repoService: RepoService;
       let shouldSkip = false;
 
       try {
@@ -70,26 +74,81 @@ export class ServiceCollectionFactory {
         }
       }
 
-      if (!playbook.token) {
-        logger.error(`Token required. Skipping playbook ${playbook.playbookName}`);
-      } else if (!shouldSkip) {
-        if (playbook.location.includes("github.com")) {
-          repoService = new GitHubRepoService({
-            repoProvider: RepoServiceProvider.GitHub,
-            baseUrl: playbook.location.toString(),
-            accessToken: playbook.token,
-          });
+      let playbookService: PlaybookService;
+      const downloadTemplate = async (downloadable: Downloadable): Promise<Template> => {
+        const url = downloadable.download_url || downloadable.url;
+        if (!url) {
+          throw new Error(`Downloadable ${downloadable} did not have download_url or url defined.`);
+        }
+        return (await axios.get<Template>(url)).data;
+      };
+
+      if (!shouldSkip) {
+        if (!playbook.token) {
+          logger.error(`Token required. Skipping playbook ${playbook.playbookName}`);
+        } else if (playbook.location.includes("github.com")) {
+          const octokit = new Octokit();
+          playbookService = new DownloadablePlaybookService(
+            async (configuration: PlaybookConfiguration, options?: TemplateFilterOptions): Promise<Downloadable[]> => {
+              const indexOfGithub = configuration.location.indexOf("github.com/");
+              const indexOfOwner = indexOfGithub + 11;
+              const indexOfRepository = configuration.location.indexOf("/", indexOfOwner) + 1;
+              const endIndexOfRepository = configuration.location.indexOf("/", indexOfRepository) + 1;
+
+              const owner = configuration.location.substring(indexOfOwner, indexOfRepository);
+              const repo = configuration.location.substring(indexOfRepository, endIndexOfRepository);
+
+              const path = configuration.templatesPath ?? FileConstants.templatesPath;
+
+              return ServiceCollectionFactory.getGitHubTemplates({ ...options, owner, repo, path }, octokit);
+            },
+            downloadTemplate,
+            playbook,
+          );
         } else if (playbook.location.includes("azure.com")) {
-          repoService = new AzureDevOpsRepoService({
-            repoProvider: RepoServiceProvider.AzureDevOps,
-            baseUrl: playbook.location.toString(),
-            accessToken: playbook.token,
-          });
+          const handler = getPersonalAccessTokenHandler(playbook.token);
+          const gitApi = new GitApi(playbook.location, [handler]);
+          playbookService = new DownloadablePlaybookService(
+            async (configuration: PlaybookConfiguration, options?: TemplateFilterOptions): Promise<Downloadable[]> => {
+              const versionDescriptor = {
+                version: options?.branch,
+                versionType: GitVersionType.Branch,
+              };
+              const gitItems = await gitApi.getItems(
+                configuration.location,
+                undefined,
+                options?.subdirectory,
+                VersionControlRecursionType.Full,
+                true,
+                undefined,
+                undefined,
+                undefined,
+                options?.branch ? versionDescriptor : undefined,
+              );
+              const content: Downloadable[] = [];
+
+              for (const gitItem of gitItems) {
+                if (!gitItem.isFolder) {
+                  if (!gitItem.url) {
+                    throw Error("url is unexpectedly null.");
+                  }
+                  // check if name matches
+                  if (gitItem.contentMetadata?.fileName == options?.name) {
+                    content.push(gitItem);
+                  }
+                }
+              }
+
+              return content;
+            },
+            downloadTemplate,
+            playbook,
+          );
         } else {
-          console.error(`Couldn't load playbook ${playbook.playbookName} from ${playbook.location}`);
+          throw Error(`Playbooks at ${playbook.location} are not currently implemented.`);
         }
 
-        activePlaybookServiceFactoryMap.set(playbook.playbookName, () => new RepositoryPlaybookService(repoService));
+        activePlaybookServiceFactoryMap.set(playbook.playbookName, () => playbookService);
       }
     });
 
@@ -121,6 +180,9 @@ export class ServiceCollectionFactory {
       }
     });
 
+    const nodeClient = new TelemetryClient(await configurationService.getAppInsightsAPIKey());
+    const metrics = new ApplicationInsightsMetrics(nodeClient);
+
     return {
       activePlaybookServiceFactoryMap,
       activeProjectServiceFactoryMap,
@@ -129,7 +191,32 @@ export class ServiceCollectionFactory {
       configurationService,
       logger,
       inputService,
-      metrics: MetricsFactory.getIfRegistered(MetricsProvider.AppInsights),
+      metrics,
     };
+  }
+
+  private static async getGitHubTemplates(
+    options: TemplateFilterOptions & { owner: string; repo: string; path: string },
+    octokit: Octokit,
+  ): Promise<Downloadable[]> {
+    const { data } = await octokit.repos.getContent({
+      owner: options.owner,
+      repo: options.repo,
+      path: options.path,
+      ref: options?.branch,
+    });
+
+    if (data instanceof Array) {
+      const downloadables = await Promise.all(
+        data.map(async (item) => {
+          return this.getGitHubTemplates({ ...options, path: item.path }, octokit);
+        }),
+      );
+      return downloadables.reduce((prev, curr) => prev.concat(curr));
+    } else if (data as Downloadable) {
+      return [data];
+    }
+
+    return [];
   }
 }

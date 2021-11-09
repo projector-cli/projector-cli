@@ -1,7 +1,7 @@
 import { ConfigurationService } from "./configurationService";
 import { Configuration, Logger, OnlyRequire, PlaybookConfiguration, ProjectConfiguration } from "../../models";
 import { StorageService } from "../storage";
-import { FileConstants } from "../../constants";
+import { ConfigurationConstants, FileConstants } from "../../constants";
 
 /**
  * Class to interact with the configuration for Projector.
@@ -335,12 +335,22 @@ export class StoredConfigurationService implements ConfigurationService {
     const configuration = await this.getOrCreateConfiguration();
     if (!configuration.appInsights) {
       configuration.appInsights = {
-        instrumentationKey: "6e4b4afa-05f9-4a1f-a5f8-a95958b53f60",
+        instrumentationKey: ConfigurationConstants.ApplicationInsightsKey,
         enabled: true,
       };
     }
     configuration.appInsights.enabled = shouldLogToAppInsights;
     await this.storageService.write(FileConstants.configFileName, configuration);
+  }
+
+  /**
+   * Get the application insights API key.
+   *
+   * @returns {string | undefined} The application insights API key.
+   */
+  public async getAppInsightsAPIKey(): Promise<string | undefined> {
+    const configuration = await this.getOrCreateConfiguration();
+    return configuration.appInsights?.instrumentationKey ?? undefined;
   }
   //#endregion
 
@@ -355,7 +365,7 @@ export class StoredConfigurationService implements ConfigurationService {
         playbooks: [],
         projects: [],
         appInsights: {
-          instrumentationKey: "6e4b4afa-05f9-4a1f-a5f8-a95958b53f60",
+          instrumentationKey: ConfigurationConstants.ApplicationInsightsKey,
           enabled: true,
         },
       }

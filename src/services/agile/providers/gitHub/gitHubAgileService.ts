@@ -1,4 +1,3 @@
-import { ConfigKey } from "../../../../constants";
 import {
   AgileProviderOptions,
   BacklogItem,
@@ -10,7 +9,6 @@ import {
   Project,
   Sprint,
 } from "../../../../models";
-import { Config } from "../../../../utils";
 import { GitHubRestService } from "../../../shared";
 import { AgileService } from "../..";
 
@@ -138,8 +136,9 @@ export class GitHubAgileService implements AgileService {
   }
 
   private async createColumns(projectId: number): Promise<number> {
-    const columns: string[] = Config.getValue(ConfigKey.AgileBoardColumns);
-    const firstColumn = Config.getValue(ConfigKey.AgileBoardFirstColumn);
+    // TODO: Fix
+    const columns: string[] = ["To-Do", "Doing", "In-Review", "Done"];
+    const firstColumn = "To-Do";
 
     let firstColumnId: number | undefined = undefined;
 

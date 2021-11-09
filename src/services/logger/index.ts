@@ -1,3 +1,4 @@
+export * from "./applicationInsightsLogger";
 export * from "./baseLogger";
 export * from "./compositeLogger";
 export * from "./consoleLogger";

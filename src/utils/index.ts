@@ -1,5 +1,4 @@
 export * from "./azureDevOpsUtils";
-export * from "./configUtils";
 export * from "./dateUtils";
 export * from "./interpolator";
 export * from "./packageJson";

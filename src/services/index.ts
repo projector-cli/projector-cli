@@ -6,5 +6,4 @@ export * from "./logger";
 export * from "./metrics";
 export * from "./playbook";
 export * from "./project";
-export * from "./repo";
 export * from "./storage";

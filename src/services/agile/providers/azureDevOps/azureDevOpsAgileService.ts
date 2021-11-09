@@ -11,9 +11,9 @@ import {
 import { WorkApi } from "azure-devops-node-api/WorkApi";
 import { WorkItemTrackingApi } from "azure-devops-node-api/WorkItemTrackingApi";
 import { AgileService } from "../..";
-import { ConfigKey, NumberConstants } from "../../../../constants";
+import { AgileConstants, NumberConstants } from "../../../../constants";
 import { AgileProviderOptions, BacklogItem, Logger, Project, Sprint } from "../../../../models";
-import { AzureDevOpsUtils, Config, retryAsync } from "../../../../utils";
+import { AzureDevOpsUtils, retryAsync } from "../../../../utils";
 import { AzureDevOpsFieldName } from "./azureDevOpsFieldName";
 import { AzureDevOpsWorkItemType } from "./azureDevOpsWorkItemType";
 
@@ -105,13 +105,11 @@ export class AzureDevOpsAgileService implements AgileService {
       capabilities: {
         processTemplate: {
           templateTypeId:
-            teamProject.capabilities?.processTemplate?.templateTypeId ||
-            Config.getValue(ConfigKey.AgileDefaultProjectTemplateId),
+            teamProject.capabilities?.processTemplate?.templateTypeId ?? AgileConstants.agileProjectTemplateTypeId,
         },
         versioncontrol: {
           sourceControlType:
-            teamProject.capabilities?.versioncontrol?.sourceControlType ||
-            Config.getValue(ConfigKey.AgileDefaultSourceControl),
+            teamProject.capabilities?.versioncontrol?.sourceControlType ?? AgileConstants.agileProjectSourceControlType,
         },
       },
     };

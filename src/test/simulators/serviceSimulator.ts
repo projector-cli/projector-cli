@@ -1,14 +1,4 @@
-import {
-  Template,
-  Logger,
-  Repo,
-  RepoItem,
-  RepoService,
-  Parameters,
-  ServiceCollection,
-  Metrics,
-  Configuration,
-} from "../../models";
+import { Template, Logger, Parameters, ServiceCollection, Metrics, Configuration } from "../../models";
 import {
   AgileService,
   ConfigurationService,
@@ -18,7 +8,6 @@ import {
   StorageService,
   StoredConfigurationService,
 } from "../../services";
-import { ModelSimulator } from "./modelSimulator";
 import { MockAgileServiceFunctions, SimulatorAgileService } from "./simulatorAgileService";
 
 interface InputServiceMockAnswers {
@@ -77,21 +66,6 @@ export class ServiceSimulator {
     return {
       createSprints: jest.fn(),
       deployTemplates: jest.fn(),
-    };
-  }
-
-  public static createTestRepoService(repo?: Repo, repoItem?: RepoItem): RepoService {
-    repo = repo ?? ModelSimulator.createTestRepo();
-    repoItem = repoItem ?? ModelSimulator.createTestRepoItem();
-
-    return {
-      listRepos: jest.fn(() => Promise.resolve([repo!])),
-      getRepo: jest.fn(() => Promise.resolve(repo!)),
-      deleteRepo: jest.fn(),
-      createRepo: jest.fn(() => Promise.resolve(repo!)),
-      latestCommit: jest.fn(),
-      listRepoItems: jest.fn(() => Promise.resolve([repoItem!])),
-      getRepoItem: jest.fn(() => Promise.resolve(repoItem!)),
     };
   }
 

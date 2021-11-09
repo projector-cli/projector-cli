@@ -1,10 +1,10 @@
 import { generate } from "randomstring";
 import * as coreInterfaces from "azure-devops-node-api/interfaces/CoreInterfaces";
 import { Guid } from "guid-typescript";
-import { ConfigKey, NumberConstants } from "../../../../constants";
+import { NumberConstants } from "../../../../constants";
 import { BacklogItem, BacklogItemType, Project, Sprint } from "../../../../models";
 import { ServiceSimulator } from "../../../../test";
-import { Config, retryAsync } from "../../../../utils";
+import { retryAsync } from "../../../../utils";
 import { AgileServiceProvider } from "../../agileServiceProvider";
 import { AzureDevOpsAgileService } from "./azureDevOpsAgileService";
 
