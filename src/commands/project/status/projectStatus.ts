@@ -1,4 +1,3 @@
-import { FileConstants } from "../../../constants";
 import { Command } from "../../../extensions";
 import { ServiceCollection } from "../../../models";
 

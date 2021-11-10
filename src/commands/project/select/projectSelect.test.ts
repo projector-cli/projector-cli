@@ -13,12 +13,12 @@ describe("Project Select Command", () => {
       return Promise.resolve([
         {
           projectName: "active",
-          url: new URL("https://www.example.com"),
+          url: "https://www.example.com",
           isActive: true,
         },
         {
           projectName: "inactive",
-          url: new URL("https://www.github.com/projector-cli/projector-cli"),
+          url: "https://www.github.com/projector-cli/projector-cli",
           isActive: false,
         },
       ]);
