@@ -1,6 +1,6 @@
 export interface CliArg {
   name: string;
-  value?: string;
+  value?: string | string[];
 }
 
 export class CliSimulator {
@@ -15,7 +15,11 @@ export class CliSimulator {
       const { name, value } = arg;
       command.push(name);
       if (value) {
-        command.push(value);
+        if (Array.isArray(value)) {
+          command.push(...value);
+        } else {
+          command.push(value);
+        }
       }
     });
     return command;

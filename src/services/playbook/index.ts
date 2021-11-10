@@ -1,2 +1,2 @@
+export * from "./downloadablePlaybookService";
 export * from "./playbookService";
-export * from "./repositoryPlaybookService";

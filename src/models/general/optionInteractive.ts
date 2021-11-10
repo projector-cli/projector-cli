@@ -1,5 +1,4 @@
-import { ConfigKey } from "../../constants";
-import { AgileServiceProvider, RepoServiceProvider } from "../../services";
+import { AgileServiceProvider } from "../../services";
 import { ServiceCollection } from "./serviceCollection";
 
 /**
@@ -19,10 +18,6 @@ export interface OptionInteractive<T = string> {
    */
   agileServiceProviders?: AgileServiceProvider[];
   /**
-   * Limits user prompts when agile provider matches
-   */
-  repoServiceProviders?: RepoServiceProvider[];
-  /**
    * Question to prompt users for correct value
    */
   prompt?: string;
@@ -30,10 +25,6 @@ export interface OptionInteractive<T = string> {
    * Description of flag
    */
   description?: string;
-  /**
-   * Config key to load value and skip question if exists
-   */
-  configKey?: ConfigKey;
   /**
    * Options to choose from
    */

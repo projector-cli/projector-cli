@@ -1,70 +1,35 @@
 import { Command } from "../../../../extensions";
-import { AgileProviderOptions, ServiceCollection, Logger, BacklogItem } from "../../../../models";
+import { ServiceCollection, Template } from "../../../../models";
 
-export interface AgileInitializationOptions extends AgileProviderOptions {
-  file: string;
+export interface TemplateDeploymentOptions {
+  all?: boolean;
+  templates?: string[];
 }
 
-export const projectTemplateDeployCommandFactory = (): Command => {
-  return new Command<AgileInitializationOptions>()
+export const projectTemplateDeployCommandFactory = (): Command<TemplateDeploymentOptions> => {
+  return new Command<TemplateDeploymentOptions>()
     .name("deploy")
     .description("Template Deployment")
-    .option("-f, --file <file>", "File containing backlog item template")
-    .optionInteractive({
-      shortName: "-f",
-      longName: "--file",
-      prompt: "What is the name of the file containing your backlog items?",
-      choices: async (serviceCollection: ServiceCollection) => {
-        const { templateService } = serviceCollection;
+    .option("-a --all <all>", "Deploy all templates", false)
+    .option("-t --templates [templates...]", "Which templates to deploy")
+    .addAction(async (serviceCollection: ServiceCollection, options: TemplateDeploymentOptions) => {
+      const { logger, activeProjectServiceFactoryMap, templateService } = serviceCollection;
+      const templateNames = options.all ? await templateService.list() : options.templates;
+      if (!templateNames) {
+        logger.log("Couldn't find any templates.");
+        return;
+      }
 
-        const files = await templateService.list();
+      const templates = await Promise.all(
+        templateNames.map(async (templateName) => templateService.read(templateName)),
+      );
+      const validTemplates = templates.filter((template): template is Template => !!template);
 
-        return [
-          ...files?.filter(
-            (filename: string) => filename.endsWith(".json") || filename.endsWith(".yml") || filename.endsWith(".yaml"),
-          ),
-          "other",
-        ];
-      },
-    })
-    .addAction(async (serviceCollection: ServiceCollection, options: AgileInitializationOptions) => {
-      const { logger, getAgileService, templateService, inputService } = serviceCollection;
-      const agileService = getAgileService(options);
+      for (const [projectName, getProject] of activeProjectServiceFactoryMap) {
+        const project = getProject();
+        await project.deployTemplates(validTemplates);
 
-      // The command will give the user the option to choose between files in the working directory
-      // If user selects 'other', they can then specify another file
-      const inputFile =
-        options.file === "other"
-          ? await inputService.askQuestion("What is the name of the file containing your backlog items?")
-          : options.file;
-
-      const template = await templateService.read(inputFile);
-
-      if (template) {
-        // Create Backlog Items
-        const items = await agileService.createBacklogItems(template.items);
-        logger.logHeader("Created Items");
-
-        items.forEach((item) => logBacklogItem(logger, item));
+        logger.logHeader(`Created Items in ${projectName}`);
       }
     });
-
-  /**
-   * Log a one-line backlog item description. Logs children recursively
-   *
-   * @param {Logger} logger Logger
-   * @param {BacklogItem} item Backlog item
-   * @param {string|undefined} parentId Parent ID if it has one
-   */
-  function logBacklogItem(logger: Logger, item: BacklogItem, parentId?: string): void {
-    const { id, name, children, url } = item;
-    const childOf = parentId ? ` (Child of ${parentId})` : "";
-    const wrappedUrl = url ? ` (${url})` : "";
-    logger.log(`${id}${childOf} - ${name}${wrappedUrl}`);
-    if (children) {
-      for (const child of children) {
-        logBacklogItem(logger, child, id);
-      }
-    }
-  }
 };

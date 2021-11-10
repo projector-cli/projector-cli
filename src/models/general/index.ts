@@ -7,4 +7,3 @@ export * from "./optionInteractive";
 export * from "./parameters";
 export * from "./properties";
 export * from "./serviceCollection";
-export * from "./sharedOptions";

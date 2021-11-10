@@ -1,30 +1,27 @@
-import { ServiceSimulator, SimulatorAgileService, CliSimulator } from "../../../../test";
+import { ServiceSimulator, CliSimulator } from "../../../../test";
 import { projectSprintsCreateCommandFactory } from "./projectSprintsCreate";
 
 describe("Project Sprints Create Command", () => {
   it("creates sprints", async () => {
-    const createSprints = jest.fn();
     const inputService = ServiceSimulator.createTestInputService({
       confirmAnswer: true,
       answer: "4/23/2021",
       numberAnswer: 5,
     });
+    inputService.confirmAction = jest.fn(() => Promise.resolve(true));
 
-    const agileService = new SimulatorAgileService(
-      {
-        createProviderSprints: createSprints,
-      },
-      inputService,
-      ServiceSimulator.createTestLogger(),
-    );
+    const projectService = ServiceSimulator.createTestProjectService();
+    const activeProjectServiceFactoryMap = ServiceSimulator.createTestActiveProjectServiceFactoryMap();
+    activeProjectServiceFactoryMap.set("test", () => projectService);
 
     const serviceCollection = ServiceSimulator.createTestServiceCollection({
-      agileService,
+      activeProjectServiceFactoryMap,
+      inputService,
     });
 
     const projectSprintsCreate = projectSprintsCreateCommandFactory();
 
     await projectSprintsCreate.setServiceCollection(serviceCollection).parseAsync(CliSimulator.createArgs());
-    expect(createSprints).toBeCalled();
+    expect(projectService.createSprints).toBeCalled();
   });
 });

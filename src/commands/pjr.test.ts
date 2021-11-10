@@ -1,7 +1,5 @@
 import { pjrCommandFactory } from "./pjr";
 import { CliSimulator, ServiceSimulator } from "../test";
-jest.mock("../initialization");
-import { registerProviders } from "../initialization";
 
 jest.mock("figlet");
 import figlet from "figlet";
@@ -24,7 +22,6 @@ describe("pjr", () => {
     await pjr.setServiceCollection(serviceCollection).parseAsync(CliSimulator.createArgs());
 
     expect(figlet.textSync).toBeCalledWith("projector");
-    expect(registerProviders).toBeCalled();
     expect(inputService.multiChoiceQuestion).toBeCalled();
   });
 });

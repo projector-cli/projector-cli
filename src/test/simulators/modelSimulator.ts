@@ -7,14 +7,10 @@ import {
   GitHubLabel,
   GitHubMilestone,
   Project,
-  Repo,
-  RepoItem,
-  RepoItemType,
-  RepoProviderOptions,
   ServiceProviderOptions,
   Configuration,
 } from "../../models";
-import { AgileServiceProvider, RepoServiceProvider } from "../../services";
+import { AgileServiceProvider } from "../../services";
 
 export class ModelSimulator {
   public static createTestTemplate(): Template {
@@ -40,13 +36,6 @@ export class ModelSimulator {
     };
   }
 
-  public static createTestRepoProviderOptions(): RepoProviderOptions {
-    return {
-      ...this.createTestServiceProviderOptions(),
-      repoProvider: RepoServiceProvider.Simulator,
-    };
-  }
-
   public static createTestBacklogItems(): BacklogItem[] {
     return [
       {
@@ -60,12 +49,6 @@ export class ModelSimulator {
         ],
       },
     ];
-  }
-
-  public static createTestRepo(): Repo {
-    return {
-      name: "test-repo",
-    };
   }
 
   public static createTestProject(): Project {
@@ -82,15 +65,6 @@ export class ModelSimulator {
         },
       },
       visibility: ProjectVisibility.Organization,
-    };
-  }
-
-  public static createTestRepoItem(): RepoItem {
-    return {
-      name: "my-item.txt",
-      path: "item/path/txt",
-      type: RepoItemType.File,
-      content: this.createTestTemplate(),
     };
   }
 

@@ -1,23 +1,13 @@
-import {
-  Template,
-  Logger,
-  Repo,
-  RepoItem,
-  RepoService,
-  Parameters,
-  ServiceCollection,
-  Metrics,
-  Configuration,
-} from "../../models";
+import { Template, Logger, Parameters, ServiceCollection, Metrics, Configuration } from "../../models";
 import {
   AgileService,
   ConfigurationService,
   InputService,
   PlaybookService,
+  ProjectService,
   StorageService,
   StoredConfigurationService,
 } from "../../services";
-import { ModelSimulator } from "./modelSimulator";
 import { MockAgileServiceFunctions, SimulatorAgileService } from "./simulatorAgileService";
 
 interface InputServiceMockAnswers {
@@ -27,30 +17,11 @@ interface InputServiceMockAnswers {
   confirmAnswer?: boolean;
 }
 
-interface OptionalServiceCollection {
-  agileService?: AgileService;
-  repoService?: RepoService;
-  playbookService?: PlaybookService;
-  templateService?: StorageService<Template>;
-  parameterService?: StorageService<Parameters>;
-  configurationService?: ConfigurationService;
-  logger?: Logger;
-  metrics?: Metrics;
-  inputService?: InputService;
-}
-
-interface MockServiceCollection extends ServiceCollection {
-  agileService: AgileService;
-  repoService: RepoService;
-  playbookService: PlaybookService;
-}
-
 export class ServiceSimulator {
-  public static createTestServiceCollection(existingServices: OptionalServiceCollection = {}): MockServiceCollection {
+  public static createTestServiceCollection(existingServices: Partial<ServiceCollection> = {}): ServiceCollection {
     const {
-      agileService: existingAgileService,
-      repoService: existingRepoService,
-      playbookService: existingPlaybookService,
+      activePlaybookServiceFactoryMap: existingPlaybookServices,
+      activeProjectServiceFactoryMap: existingProjectServices,
       templateService: existingTemplateService,
       parameterService: existingParameterService,
       configurationService: existingConfigurationService,
@@ -58,48 +29,43 @@ export class ServiceSimulator {
       metrics: existingMetrics,
       inputService: existingInputService,
     } = existingServices;
-    const inputService: InputService = (existingInputService || ServiceSimulator.createTestInputService())!;
-    const logger: Logger = (existingLogger || ServiceSimulator.createTestLogger())!;
-    const metrics: Metrics = (existingMetrics || ServiceSimulator.createTestMetrics())!;
-    const agileService: AgileService = (existingAgileService ||
-      ServiceSimulator.createTestAgileService({}, inputService, logger))!;
-    const repoService: RepoService = (existingRepoService || ServiceSimulator.createTestRepoService())!;
-    const playbookService: PlaybookService = (existingPlaybookService || ServiceSimulator.createTestPlaybookService())!;
+    const inputService: InputService = existingInputService ?? ServiceSimulator.createTestInputService();
+    const logger: Logger = existingLogger ?? ServiceSimulator.createTestLogger();
+    const metrics: Metrics = existingMetrics ?? ServiceSimulator.createTestMetrics();
+    const activePlaybookServiceFactoryMap: Map<string, () => PlaybookService> =
+      existingPlaybookServices ?? this.createTestActivePlaybookServiceFactoryMap();
+    const activeProjectServiceFactoryMap: Map<string, () => ProjectService> =
+      existingProjectServices ?? this.createTestActiveProjectServiceFactoryMap();
     const configurationService =
-      existingConfigurationService ||
+      existingConfigurationService ??
       new StoredConfigurationService(ServiceSimulator.createTestStorageService<Configuration>(), logger);
 
     const serviceCollection: ServiceCollection = {
-      parameterService: (existingParameterService || ServiceSimulator.createTestStorageService<Parameters>())!,
-      templateService: (existingTemplateService || ServiceSimulator.createTestStorageService<Template>())!,
+      parameterService: (existingParameterService ?? ServiceSimulator.createTestStorageService<Parameters>())!,
+      templateService: (existingTemplateService ?? ServiceSimulator.createTestStorageService<Template>())!,
       configurationService,
       logger,
       metrics,
       inputService,
-      getPlaybookService: () => playbookService,
-      getAgileService: () => agileService,
+      activePlaybookServiceFactoryMap,
+      activeProjectServiceFactoryMap,
     };
 
-    return {
-      ...serviceCollection,
-      agileService,
-      repoService,
-      playbookService,
-    };
+    return serviceCollection;
   }
 
-  public static createTestRepoService(repo?: Repo, repoItem?: RepoItem): RepoService {
-    repo = repo ?? ModelSimulator.createTestRepo();
-    repoItem = repoItem ?? ModelSimulator.createTestRepoItem();
+  public static createTestActivePlaybookServiceFactoryMap(): Map<string, () => PlaybookService> {
+    return new Map<string, () => PlaybookService>([["test", ServiceSimulator.createTestPlaybookService]]);
+  }
 
+  public static createTestActiveProjectServiceFactoryMap(): Map<string, () => ProjectService> {
+    return new Map<string, () => ProjectService>([["test", ServiceSimulator.createTestProjectService]]);
+  }
+
+  public static createTestProjectService(): ProjectService {
     return {
-      listRepos: jest.fn(() => Promise.resolve([repo!])),
-      getRepo: jest.fn(() => Promise.resolve(repo!)),
-      deleteRepo: jest.fn(),
-      createRepo: jest.fn(() => Promise.resolve(repo!)),
-      latestCommit: jest.fn(),
-      listRepoItems: jest.fn(() => Promise.resolve([repoItem!])),
-      getRepoItem: jest.fn(() => Promise.resolve(repoItem!)),
+      createSprints: jest.fn(),
+      deployTemplates: jest.fn(),
     };
   }
 
@@ -115,18 +81,14 @@ export class ServiceSimulator {
     };
   }
 
-  public static createTestPlaybookService(templates?: Template[]): PlaybookService {
+  public static createTestPlaybookService(): PlaybookService {
     return {
-      getTemplates: jest.fn(() => Promise.resolve(templates || [])),
+      getTemplates: jest.fn(() => Promise.resolve([])),
     };
   }
 
-  public static createTestAgileService(
-    functions: MockAgileServiceFunctions,
-    inputService: InputService,
-    logger: Logger,
-  ): AgileService {
-    return new SimulatorAgileService(functions, inputService, logger);
+  public static createTestAgileService(functions: MockAgileServiceFunctions): AgileService {
+    return new SimulatorAgileService(functions);
   }
 
   public static createTestLogger(): Logger {
@@ -176,6 +138,9 @@ export class ServiceSimulator {
       removeProject: jest.fn(),
       selectProject: jest.fn(),
       deselectProject: jest.fn(),
+
+      isAppInsightsEnabled: jest.fn(() => Promise.resolve(true)),
+      setAppInsightsLogging: jest.fn(),
     };
   }
 }

@@ -11,6 +11,12 @@ export const playbookDeselectCommandFactory = (): Command => {
     .name("deselect")
     .description("Deselect a playbook.")
     .optionInteractive({
+      shortName: "-a",
+      longName: "--all",
+      description: "If true, deselects all playbooks.",
+      prompt: "Deslect all?",
+    })
+    .optionInteractive({
       shortName: "-p",
       longName: "--playbook",
       description: "The name of the playbook to deselect.",
@@ -19,12 +25,6 @@ export const playbookDeselectCommandFactory = (): Command => {
         const { configurationService } = services;
         return (await configurationService.getPlaybooks()).map((playbook) => playbook.playbookName);
       },
-    })
-    .optionInteractive({
-      shortName: "-a",
-      longName: "--all",
-      description: "If true, deselects all playbooks.",
-      prompt: "Deslect all?",
     })
     .addAction(async (serviceCollection: ServiceCollection, options: PlaybookDeselectOptions) => {
       const { configurationService } = serviceCollection;

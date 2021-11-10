@@ -1,46 +1,45 @@
-import { AgileProviderOptions, BacklogItem, Logger, Project, Sprint } from "../../models";
-import { BaseAgileService, InputService } from "../../services";
+import { BacklogItem, Project, Sprint } from "../../models";
+import { AgileService } from "../../services";
 
 export interface MockAgileServiceFunctions {
   createProject?: (project: Project) => Promise<Project>;
   getProject?: (name: string) => Promise<Project | null>;
   deleteProject?: (project: Project) => Promise<boolean>;
   getSprint?: (id: string) => Promise<Sprint>;
-  createProviderSprints?: (sprints: Sprint[]) => Promise<Sprint[]>;
+  createSprints?: (sprints: Sprint[]) => Promise<Sprint[]>;
   deleteSprint?: (id: string) => Promise<void>;
   getBacklogItems?: (ids?: string[]) => Promise<BacklogItem[]>;
   createBacklogItems?: (items: BacklogItem[]) => Promise<BacklogItem[]>;
   deleteBacklogItems?: (ids: string[]) => Promise<void>;
 }
 
-export class SimulatorAgileService extends BaseAgileService {
+export class SimulatorAgileService implements AgileService {
   createProject: (project: Project) => Promise<Project>;
   getProject: (name: string) => Promise<Project | null>;
   deleteProject: (project: Project) => Promise<boolean>;
   getSprint: (id: string) => Promise<Sprint>;
-  createProviderSprints: (sprints: Sprint[]) => Promise<Sprint[]>;
+  createSprints: (sprints: Sprint[]) => Promise<Sprint[]>;
   deleteSprint: (id: string) => Promise<void>;
   getBacklogItems: (ids?: string[]) => Promise<BacklogItem[]>;
   createBacklogItems: (items: BacklogItem[]) => Promise<BacklogItem[]>;
   deleteBacklogItems: (ids: string[]) => Promise<void>;
 
-  constructor(functions: MockAgileServiceFunctions, inputService: InputService, logger: Logger) {
-    super({} as AgileProviderOptions, inputService, logger);
+  constructor(functions?: MockAgileServiceFunctions) {
     const {
       getBacklogItems,
       createBacklogItems,
-      createProviderSprints,
+      createSprints,
       deleteBacklogItems,
       getSprint,
       deleteSprint,
       createProject,
       getProject,
       deleteProject,
-    } = functions;
+    } = functions ?? {};
     this.getBacklogItems = getBacklogItems || jest.fn();
     this.createBacklogItems = createBacklogItems || jest.fn();
     this.deleteBacklogItems = deleteBacklogItems || jest.fn();
-    this.createProviderSprints = createProviderSprints || jest.fn();
+    this.createSprints = createSprints || jest.fn();
     this.getSprint = getSprint || jest.fn();
     this.deleteSprint = deleteSprint || jest.fn();
     this.createProject = createProject || jest.fn();

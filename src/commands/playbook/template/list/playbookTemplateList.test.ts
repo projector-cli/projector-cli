@@ -1,4 +1,4 @@
-import { RepoService, RepoItem, Template } from "../../../../models";
+import { Template } from "../../../../models";
 import { CliSimulator, ServiceSimulator } from "../../../../test";
 import { playbookTemplateListCommandFactory } from "./playbookTemplateList";
 
@@ -12,17 +12,13 @@ describe("Playbook Template List Command", () => {
       },
     ];
 
-    const repoService: RepoService = {
-      ...ServiceSimulator.createTestRepoService(),
-      getRepoItem: jest.fn(() => Promise.resolve(({ content: templateFileContent } as unknown) as RepoItem)),
-    };
+    const playbookService = ServiceSimulator.createTestPlaybookService();
+    playbookService.getTemplates = jest.fn(() => Promise.resolve(templateFileContent));
 
-    const playbookService = ServiceSimulator.createTestPlaybookService(templateFileContent);
+    const activePlaybookServiceFactoryMap = ServiceSimulator.createTestActivePlaybookServiceFactoryMap();
+    activePlaybookServiceFactoryMap.set("test", () => playbookService);
 
-    const serviceCollection = ServiceSimulator.createTestServiceCollection({
-      repoService,
-      playbookService,
-    });
+    const serviceCollection = ServiceSimulator.createTestServiceCollection({ activePlaybookServiceFactoryMap });
 
     const playbookTemplateList = playbookTemplateListCommandFactory();
 

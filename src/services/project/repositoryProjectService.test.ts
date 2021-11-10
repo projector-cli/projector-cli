@@ -1,5 +1,5 @@
-import { AgileService, InputService, StorageService } from "..";
-import { Template, Logger, Sprint } from "../../models";
+import { AgileService, StorageService } from "..";
+import { Template, Sprint } from "../../models";
 import { ServiceSimulator } from "../../test";
 import { RepositoryProjectService } from "./repositoryProjectService";
 
@@ -29,9 +29,7 @@ describe("Project Service", () => {
   ];
 
   let templateService: StorageService<Template>;
-  let inputService: InputService;
   let agileService: AgileService;
-  let logger: Logger;
 
   beforeEach(() => {
     templateService = ServiceSimulator.createTestStorageService<Template>();
@@ -42,37 +40,29 @@ describe("Project Service", () => {
         : Promise.resolve(unselectedTemplateItem),
     );
 
-    inputService = ServiceSimulator.createTestInputService();
-    logger = ServiceSimulator.createTestLogger();
-
-    agileService = ServiceSimulator.createTestAgileService({}, inputService, logger);
+    agileService = ServiceSimulator.createTestAgileService({});
     agileService.createSprints = jest.fn((requested) =>
       requested == [] ? Promise.resolve(sprints) : Promise.resolve([]),
     );
   });
 
   it("does not create sprints without a configuration", async () => {
-    const projectService = new RepositoryProjectService(agileService, templateService, logger);
+    const projectService = new RepositoryProjectService(agileService);
     expect(await projectService.createSprints([])).toEqual([]);
   });
 
   it("creates sprints", async () => {
-    const projectService = new RepositoryProjectService(agileService, templateService, logger);
+    const projectService = new RepositoryProjectService(agileService);
     expect(await projectService.createSprints(sprints)).toBeTruthy();
   });
 
   it("fails to deploy without any templates", async () => {
-    const projectService = new RepositoryProjectService(agileService, templateService, logger);
-    expect((await projectService.deployTemplates({})).length).toBe(0);
+    const projectService = new RepositoryProjectService(agileService);
+    expect((await projectService.deployTemplates([])).length).toBe(0);
   });
 
   it("deploys given templates", async () => {
-    const projectService = new RepositoryProjectService(agileService, templateService, logger);
-    expect((await projectService.deployTemplates({ templates: [selectedTemplateName] })).length).toBe(1);
-  });
-
-  it("deploys all templates", async () => {
-    const projectService = new RepositoryProjectService(agileService, templateService, logger);
-    expect((await projectService.deployTemplates({ all: true })).length).toBe(2);
+    const projectService = new RepositoryProjectService(agileService);
+    expect((await projectService.deployTemplates([selectedTemplateItem])).length).toBe(1);
   });
 });

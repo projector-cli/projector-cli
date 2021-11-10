@@ -4,16 +4,8 @@ import { Command as CommanderCommand } from "commander";
 import figlet from "figlet";
 import { MetricNames } from "../constants";
 import { ServiceCollectionFactory } from "../factories";
-import {
-  ActionHandler,
-  AgileProviderOptions,
-  OptionInteractive,
-  Properties,
-  RepoProviderOptions,
-  ServiceCollection,
-} from "../models";
-import { AgileServiceProvider, RepoServiceProvider } from "../services";
-import { Config } from "../utils";
+import { ActionHandler, AgileProviderOptions, OptionInteractive, Properties, ServiceCollection } from "../models";
+import { AgileServiceProvider } from "../services";
 
 /**
  * Command extension class
@@ -36,20 +28,11 @@ export class Command<TOptions = any> extends CommanderCommand {
   }
 
   public optionInteractive(optionConfig: OptionInteractive): Command<TOptions> {
-    const {
-      shortName,
-      longName,
-      description,
-      defaultValue,
-      agileServiceProviders,
-      repoServiceProviders,
-      prompt,
-      choices,
-    } = optionConfig;
+    const { shortName, longName, defaultValue, agileServiceProviders, prompt, choices } = optionConfig;
 
     const variableName = this.getVariableName(longName);
 
-    const decoratedDescription = description + this.getDecoratedDescription(optionConfig);
+    const decoratedDescription = this.getDecoratedDescription(optionConfig);
 
     this.option(`${shortName}, ${longName} <${variableName}>`, decoratedDescription);
 
@@ -64,15 +47,9 @@ export class Command<TOptions = any> extends CommanderCommand {
       }
 
       const agileServiceProvider = this.getAgileProvider();
-      const repoServiceProvider = this.getRepoProvider();
 
       // Check that current agile provider is included in list of option service providers
       if (agileServiceProviders && agileServiceProvider && !agileServiceProviders.includes(agileServiceProvider)) {
-        return;
-      }
-
-      // Check that current repo provider is included in list of option service providers
-      if (repoServiceProviders && repoServiceProvider && !repoServiceProviders.includes(repoServiceProvider)) {
         return;
       }
 
@@ -152,24 +129,18 @@ export class Command<TOptions = any> extends CommanderCommand {
   }
 
   private getDecoratedDescription(optionConfig: OptionInteractive): string {
-    const { description, configKey, agileServiceProviders, repoServiceProviders, choices } = optionConfig;
+    const { description, agileServiceProviders, choices } = optionConfig;
 
     return (
       description +
-      (configKey ? `\nCan be provided via environment variable ${Config.getEnvironmentVariableName(configKey)}` : "") +
       "\nCan be provided interactively by user if not available" +
       (choices && typeof choices !== "function" ? `\nOptions: (${choices.join(", ")})` : "") +
-      (agileServiceProviders ? `\nOnly valid for agile providers: (${agileServiceProviders.join(", ")})` : "") +
-      (repoServiceProviders ? `\nOnly valid for repo providers: (${repoServiceProviders.join(", ")})` : "")
+      (agileServiceProviders ? `\nOnly valid for agile providers: (${agileServiceProviders.join(", ")})` : "")
     );
   }
 
   private getAgileProvider(): AgileServiceProvider {
     return ((this.commandOptions as any) as AgileProviderOptions).agileProvider;
-  }
-
-  private getRepoProvider(): RepoServiceProvider {
-    return ((this.commandOptions as any) as RepoProviderOptions).repoProvider;
   }
 
   /**
@@ -197,7 +168,7 @@ export class Command<TOptions = any> extends CommanderCommand {
     this.actions.push(actionHandler);
 
     this.action(async () => {
-      const serviceCollection = this.serviceCollection || ServiceCollectionFactory.create();
+      const serviceCollection = this.serviceCollection || (await ServiceCollectionFactory.create());
 
       this.commandOptions = {
         ...this.opts(),

@@ -3,7 +3,7 @@ import { SprintConfiguration } from "./sprintConfiguration";
 export interface ProjectConfiguration {
   isActive?: boolean;
   projectName: string;
-  url: URL;
+  url: string;
   token?: string;
   sprints?: SprintConfiguration[];
 }
