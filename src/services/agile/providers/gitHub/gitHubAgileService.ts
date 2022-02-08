@@ -11,6 +11,7 @@ import {
 } from "../../../../models";
 import { GitHubRestService } from "../../../shared";
 import { AgileService } from "../..";
+import { sleep } from "../../../../utils";
 
 interface DbIdProp {
   db_id: number;
@@ -38,8 +39,20 @@ export class GitHubAgileService implements AgileService {
     return Promise.all(issues.map((issue) => this.mapGitHubIssueToBacklogItem(issue)));
   };
 
-  createBacklogItems = (items: BacklogItem[]): Promise<BacklogItem[]> => {
-    return Promise.all(items.map((item: BacklogItem) => this.createBacklogItem(item)));
+  createBacklogItems = async (items: BacklogItem[]): Promise<BacklogItem[]> => {
+    const results: BacklogItem[] = [];
+    let sleeptime = 0;
+    if (items === []) {
+      return Promise.resolve(results);
+    }
+    for (const item of items) {
+      // To avoid secondary rate limits, we need to wait 1 second between each call (not kidding)
+      // https://docs.github.com/en/rest/guides/best-practices-for-integrators#dealing-with-secondary-rate-limits
+      await sleep(sleeptime);
+      results.push(await this.createBacklogItem(item));
+      sleeptime = 1;
+    }
+    return results;
   };
 
   deleteBacklogItems = async (): Promise<void> => {
@@ -171,6 +184,7 @@ export class GitHubAgileService implements AgileService {
   private async createGitHubIssue(backlogItem: BacklogItem, label?: GitHubLabel): Promise<BacklogItem> {
     const { name, description, acceptanceCriteria, children } = backlogItem;
     const body = this.createIssueBody(description, acceptanceCriteria, children);
+    console.log(`Creating issue ${name} with body:\n${body}`);
 
     // Create issue in GitHub
     const issue = await this.github.createGitHubIssue(name, body, label);

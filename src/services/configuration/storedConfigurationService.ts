@@ -350,7 +350,7 @@ export class StoredConfigurationService implements ConfigurationService {
    */
   public async getAppInsightsAPIKey(): Promise<string | undefined> {
     const configuration = await this.getOrCreateConfiguration();
-    return configuration.appInsights?.instrumentationKey ?? undefined;
+    return configuration.appInsights?.instrumentationKey ?? ConfigurationConstants.ApplicationInsightsKey;
   }
   //#endregion
 

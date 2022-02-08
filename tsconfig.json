@@ -15,6 +15,7 @@
     "./src/**/*.json"
   ],
   "exclude": [
+    "**/*.js",
     "**/test",
     "**/*.test.ts"
   ]

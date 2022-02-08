@@ -10,7 +10,7 @@ export const projectTemplateDeployCommandFactory = (): Command<TemplateDeploymen
   return new Command<TemplateDeploymentOptions>()
     .name("deploy")
     .description("Template Deployment")
-    .option("-a --all <all>", "Deploy all templates", false)
+    .option("-a --all <all>", "Deploy all templates")
     .option("-t --templates [templates...]", "Which templates to deploy")
     .addAction(async (serviceCollection: ServiceCollection, options: TemplateDeploymentOptions) => {
       const { logger, activeProjectServiceFactoryMap, templateService } = serviceCollection;

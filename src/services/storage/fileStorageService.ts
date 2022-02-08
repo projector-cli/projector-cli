@@ -72,7 +72,7 @@ export class FileStorageService<T> implements StorageService<T> {
   }
 
   public async list(location?: string): Promise<string[]> {
-    const path = join(process.cwd(), location || "");
+    const path = join(this.defaultWriteLocation, location || "");
     return readdir(path);
   }
 

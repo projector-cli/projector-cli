@@ -9,5 +9,5 @@ export class FileConstants {
   public static readonly importDirectory = "imports";
   public static readonly parametersFileName = "parameters.json";
   public static readonly templatesFileName = "templates.json";
-  public static readonly templatesPath = path.join(".projector", "backlogItemTemplates");
+  public static readonly templatesPath = path.join(".projector", "workItemTemplates");
 }

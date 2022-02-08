@@ -43,7 +43,7 @@ export class GitHubRestService {
           ...this.options,
           name,
           color: color || Utils.randomColor(),
-          description,
+          description: description?.substring(0, 100), // Upper limit for label descriptions
         });
         return response.data;
       } else {

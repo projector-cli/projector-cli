@@ -6,3 +6,5 @@ projector.json
 parameters.json
 imports/
 .DS_Store
+.projector
+src/scripts/deleteIssues.js

@@ -27,6 +27,8 @@ import { GitVersionType } from "azure-devops-node-api/interfaces/GitInterfaces";
 import { VersionControlRecursionType } from "azure-devops-node-api/interfaces/TfvcInterfaces";
 import { GitApi } from "azure-devops-node-api/GitApi";
 import { getPersonalAccessTokenHandler } from "azure-devops-node-api";
+import yaml from "yaml";
+import path from "path";
 
 /**
  * Factory for collections of services
@@ -52,7 +54,10 @@ export class ServiceCollectionFactory {
 
     const inputService = new InquirerInputService(logger);
     const parameterService = new FileStorageService<Parameters>(process.cwd(), logger);
-    const templateService = new FileStorageService<Template>(process.cwd(), logger);
+    const templateService = new FileStorageService<Template>(
+      path.join(process.cwd(), FileConstants.templatesPath),
+      logger,
+    );
 
     const activePlaybookServiceFactoryMap = new Map<string, () => PlaybookService>();
     const activeProjectServiceFactoryMap = new Map<string, () => ProjectService>();
@@ -80,7 +85,13 @@ export class ServiceCollectionFactory {
         if (!url) {
           throw new Error(`Downloadable ${downloadable} did not have download_url or url defined.`);
         }
-        return (await axios.get<Template>(url)).data;
+        if (url.endsWith(".json")) {
+          return (await axios.get<Template>(url)).data;
+        } else if (url.endsWith(".yml") || url.endsWith(".yaml")) {
+          const yamlString = (await axios.get(url)).data;
+          return yaml.parse(yamlString) as Template;
+        }
+        throw new Error("Filetype not supported");
       };
 
       if (!shouldSkip) {
@@ -93,10 +104,13 @@ export class ServiceCollectionFactory {
               const indexOfGithub = configuration.location.indexOf("github.com/");
               const indexOfOwner = indexOfGithub + 11;
               const indexOfRepository = configuration.location.indexOf("/", indexOfOwner) + 1;
-              const endIndexOfRepository = configuration.location.indexOf("/", indexOfRepository) + 1;
+              const endIndexOfRepository = configuration.location.indexOf("/", indexOfRepository);
 
-              const owner = configuration.location.substring(indexOfOwner, indexOfRepository);
-              const repo = configuration.location.substring(indexOfRepository, endIndexOfRepository);
+              const owner = configuration.location.substring(indexOfOwner, indexOfRepository - 1);
+              const repo = configuration.location.substring(
+                indexOfRepository,
+                endIndexOfRepository > 0 ? endIndexOfRepository : undefined,
+              );
 
               const path = configuration.templatesPath ?? FileConstants.templatesPath;
 
